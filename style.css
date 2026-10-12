@@ -1,16 +1,28 @@
 * { box-sizing: border-box; }
 
+/* ===== Strand-Hintergrund ===== */
 body {
   margin: 0;
   padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
-  background: #0d1117;
-  color: #e6edf3;
+  color: #23404f;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #dceff6;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 82% 9%, rgba(255, 238, 196, 0.95) 0 5%, rgba(255, 238, 196, 0) 22%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'%3E%3Cpath d='M0 40 C80 20 160 60 240 40 S360 20 400 35 V200 H0Z' fill='%2393cbd9'/%3E%3Cpath d='M0 92 C70 76 150 112 230 94 S350 74 400 90 V200 H0Z' fill='%23f6fbfc' opacity='0.75'/%3E%3Cpath d='M0 102 C80 90 160 120 240 102 S350 86 400 100 V200 H0Z' fill='%23eedfc2'/%3E%3C/svg%3E") bottom / 100% 34% no-repeat,
+    linear-gradient(180deg, #dceff6 0%, #c3e5ef 55%, #a9d7e4 100%);
 }
 
 main { max-width: 480px; margin: 0 auto; padding-top: 16px; }
 
-h1 { font-size: 28px; margin: 8px 0 16px; }
+h1 { font-size: 28px; margin: 8px 0 16px; color: #1f3a48; }
 h2 { font-size: 18px; margin-top: 0; }
 
 [hidden] { display: none !important; }
@@ -39,59 +51,68 @@ h2 { font-size: 18px; margin-top: 0; }
   justify-content: center;
   font-size: 44px;
   border-radius: 20px;
-  background: #30363d;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 14px rgba(35, 64, 79, 0.08);
   transition: transform 0.15s;
 }
 .kachel-feld:active .kachel { transform: scale(0.96); }
 
 .kachel-titel { margin-top: 6px; font-size: 15px; font-weight: 600; }
-.kachel-info { font-size: 12px; color: #8b949e; }
+.kachel-info { font-size: 12px; color: #4d6b7a; }
 
 /* Pastellfarben für aktive Kacheln */
-.farbe-wasser { background: #a9c4dc; }        /* mattes Hellblau */
-.farbe-gruen  { background: #b4d8bf; }        /* für später, z. B. Todos */
-.farbe-gelb   { background: #ecd9a8; }        /* für später, z. B. Ernährung */
-.farbe-lila   { background: #cfc0e3; }        /* für später, z. B. Kleiderschrank */
-.farbe-rosa   { background: #e8c1c8; }        /* für später */
+.farbe-wasser { background: #a9c9e0; }   /* mattes Hellblau */
+.farbe-gruen  { background: #b9dcc4; }   /* für später */
+.farbe-gelb   { background: #f0dfb2; }   /* für später */
+.farbe-lila   { background: #d4c7e6; }   /* für später */
+.farbe-rosa   { background: #eccbd0; }   /* für später */
 
 /* Ausgegraute Kacheln */
-.bald .kachel { background: #21262d; filter: grayscale(1); opacity: 0.45; }
+.bald .kachel {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  filter: grayscale(1);
+  opacity: 0.55;
+}
 .bald .kachel-titel,
-.bald .kachel-info { opacity: 0.45; }
-.bald .kachel-feld:active .kachel { transform: none; }
+.bald .kachel-info { opacity: 0.5; }
 
 .zurueck {
   display: inline-block;
   margin-top: 4px;
   font-size: 17px;
-  color: #2f81f7;
+  color: #2d6f8f;
   text-decoration: none;
 }
 
 /* ===== Wasser-Ansicht ===== */
 .karte {
-  background: #161b22;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
   padding: 16px;
   margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(35, 64, 79, 0.08);
 }
 
 .menge { font-size: 32px; font-weight: bold; margin: 0 0 12px; }
-.klein { color: #8b949e; margin: 8px 0 0; }
+.klein { color: #4d6b7a; margin: 8px 0 0; }
 
-.balken { height: 16px; background: #30363d; border-radius: 8px; overflow: hidden; }
-.fuellung { height: 100%; width: 0; background: #2f81f7; transition: width 0.4s; }
+.balken { height: 16px; background: rgba(255, 255, 255, 0.7); border-radius: 8px; overflow: hidden; }
+.fuellung { height: 100%; width: 0; background: #5aa9c9; transition: width 0.4s; }
 
 .knopf-reihe { display: flex; gap: 8px; margin-bottom: 16px; }
 
 .knopf {
   padding: 18px 12px; font-size: 17px; font-weight: bold;
   color: white; border: none; border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(35, 64, 79, 0.12);
 }
 .knopf:active { transform: scale(0.97); }
 
-.gruen { flex: 2; background: #2ea043; }
-.rot { flex: 1; background: #da3633; }
+.gruen { flex: 2; background: #5aa880; }
+.rot { flex: 1; background: #d9776f; }
 
 /* Balkendiagramm */
 .diagramm { display: flex; gap: 8px; }
@@ -117,26 +138,27 @@ h2 { font-size: 18px; margin-top: 0; }
   width: 100%;
   min-height: 2px;
   flex-shrink: 0;
-  background: #2f81f7;
+  background: #86bcd8;
   border-radius: 6px 6px 0 0;
 }
-.saeule.erreicht { background: #2ea043; }
+.saeule.erreicht { background: #72bf95; }
 
 .ziel {
   position: absolute;
   left: -4px; right: -4px;
-  border-top: 2px dashed #d29922;
+  border-top: 2px dashed #e0a458;
 }
 
-.wert { font-size: 11px; color: #8b949e; margin-bottom: 4px; }
-.tag { font-size: 12px; color: #8b949e; margin-top: 6px; }
+.wert { font-size: 11px; color: #4d6b7a; margin-bottom: 4px; }
+.tag { font-size: 12px; color: #4d6b7a; margin-top: 6px; }
 
 /* ===== Hinweis von oben ===== */
 .hinweis {
   position: fixed; left: 16px; right: 16px;
   top: calc(env(safe-area-inset-top) + 12px);
-  background: #d29922; color: #0d1117; font-weight: bold;
+  background: #f4d88a; color: #3d3418; font-weight: bold;
   padding: 14px 16px; border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(35, 64, 79, 0.18);
   transform: translateY(-200%); transition: transform 0.5s;
   z-index: 10;
 }
