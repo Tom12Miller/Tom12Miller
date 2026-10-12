@@ -57,24 +57,42 @@ function anzeigen() {
 }
 
 function verlaufAnzeigen() {
-  const liste = document.getElementById("verlauf");
-  liste.innerHTML = "";
+  const diagramm = document.getElementById("diagramm");
+  diagramm.innerHTML = "";
 
-  for (let i = 0; i < 7; i++) {
+  // Werte der letzten 7 Tage sammeln, ältester Tag zuerst
+  const tage = [];
+  for (let i = 6; i >= 0; i--) {
     const tag = new Date();
     tag.setDate(tag.getDate() - i);
     const anzahl = (daten[tagesSchluessel(tag)] || []).length;
+    tage.push({
+      name: i === 0 ? "Heute" : tag.toLocaleDateString("de-DE", { weekday: "short" }),
+      liter: anzahl * FLASCHE
+    });
+  }
 
-    const name = i === 0 ? "Heute" :
-      tag.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" });
-    const haken = anzahl * FLASCHE >= TAGESZIEL ? " ✓" : "";
+  // Der höchste Wert bestimmt die Skala, mindestens aber das Tagesziel
+  const maximum = Math.max(TAGESZIEL, ...tage.map(t => t.liter));
+  const zielHoehe = (TAGESZIEL / maximum) * 85;
 
-    const eintrag = document.createElement("li");
-    eintrag.innerHTML = `<span>${name}</span><span>${liter(anzahl)} L${haken}</span>`;
-    liste.appendChild(eintrag);
+  for (const tag of tage) {
+    const hoehe = (tag.liter / maximum) * 85;
+    const erreicht = tag.liter >= TAGESZIEL ? " erreicht" : "";
+    const text = tag.liter.toFixed(1).replace(".", ",");
+
+    const spalte = document.createElement("div");
+    spalte.className = "spalte";
+    spalte.innerHTML = `
+      <div class="flaeche">
+        <div class="ziel" style="bottom: ${zielHoehe}%"></div>
+        <span class="wert">${text}</span>
+        <div class="saeule${erreicht}" style="height: ${hoehe}%"></div>
+      </div>
+      <span class="tag">${tag.name}</span>`;
+    diagramm.appendChild(spalte);
   }
 }
-
 // ===== Hinweis-Feld =====
 function hinweisPruefen(heute, ziel) {
   const feld = document.getElementById("hinweis");
