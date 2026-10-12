@@ -53,9 +53,13 @@ function anzeigen() {
   }
 
   verlaufAnzeigen();
+  document.getElementById("kachel-wasser-info").textContent =
+    liter(anzahl) + " / " + TAGESZIEL.toFixed(1).replace(".", ",") + " L";
+
   hinweisPruefen(heute, ziel);
 }
 
+// ===== Balkendiagramm der letzten 7 Tage =====
 function verlaufAnzeigen() {
   const diagramm = document.getElementById("diagramm");
   diagramm.innerHTML = "";
@@ -93,6 +97,7 @@ function verlaufAnzeigen() {
     diagramm.appendChild(spalte);
   }
 }
+
 // ===== Hinweis-Feld =====
 function hinweisPruefen(heute, ziel) {
   const feld = document.getElementById("hinweis");
@@ -139,3 +144,17 @@ document.addEventListener("visibilitychange", () => {
 });
 
 anzeigen();
+
+// ===== Navigation zwischen den Ansichten =====
+function ansichtWechseln() {
+  let ziel = location.hash.replace("#", "") || "start";
+  if (!document.getElementById("ansicht-" + ziel)) ziel = "start";
+
+  document.querySelectorAll(".ansicht").forEach(ansicht => {
+    ansicht.hidden = ansicht.id !== "ansicht-" + ziel;
+  });
+  window.scrollTo(0, 0);
+}
+
+window.addEventListener("hashchange", ansichtWechseln);
+ansichtWechseln();
