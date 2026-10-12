@@ -1,31 +1,64 @@
-/* ===== Startseite mit Kacheln ===== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+main { max-width: 480px; margin: 0 auto; padding-top: 16px; }
+
+h1 { font-size: 28px; margin: 8px 0 16px; }
+h2 { font-size: 18px; margin-top: 0; }
+
 [hidden] { display: none !important; }
 
+/* ===== Startseite mit Kacheln ===== */
 .kacheln {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px 14px;
+  padding-bottom: 24px;
 }
 
-.kachel {
+.kachel-feld {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-height: 130px;
-  padding: 16px;
-  background: #161b22;
-  border-radius: 16px;
+  align-items: center;
   color: inherit;
   text-decoration: none;
 }
-.kachel:active { transform: scale(0.97); }
 
-.kachel-wasser { background: #0c2d6b; }
-.kachel.bald { opacity: 0.45; }
+.kachel {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  border-radius: 20px;
+  background: #30363d;
+  transition: transform 0.15s;
+}
+.kachel-feld:active .kachel { transform: scale(0.96); }
 
-.kachel-symbol { font-size: 32px; }
-.kachel-titel { font-size: 18px; font-weight: bold; }
-.kachel-info { margin-top: auto; font-size: 14px; color: #8b949e; }
+.kachel-titel { margin-top: 6px; font-size: 15px; font-weight: 600; }
+.kachel-info { font-size: 12px; color: #8b949e; }
+
+/* Pastellfarben für aktive Kacheln */
+.farbe-wasser { background: #a9c4dc; }        /* mattes Hellblau */
+.farbe-gruen  { background: #b4d8bf; }        /* für später, z. B. Todos */
+.farbe-gelb   { background: #ecd9a8; }        /* für später, z. B. Ernährung */
+.farbe-lila   { background: #cfc0e3; }        /* für später, z. B. Kleiderschrank */
+.farbe-rosa   { background: #e8c1c8; }        /* für später */
+
+/* Ausgegraute Kacheln */
+.bald .kachel { background: #21262d; filter: grayscale(1); opacity: 0.45; }
+.bald .kachel-titel,
+.bald .kachel-info { opacity: 0.45; }
+.bald .kachel-feld:active .kachel { transform: none; }
 
 .zurueck {
   display: inline-block;
@@ -34,3 +67,77 @@
   color: #2f81f7;
   text-decoration: none;
 }
+
+/* ===== Wasser-Ansicht ===== */
+.karte {
+  background: #161b22;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.menge { font-size: 32px; font-weight: bold; margin: 0 0 12px; }
+.klein { color: #8b949e; margin: 8px 0 0; }
+
+.balken { height: 16px; background: #30363d; border-radius: 8px; overflow: hidden; }
+.fuellung { height: 100%; width: 0; background: #2f81f7; transition: width 0.4s; }
+
+.knopf-reihe { display: flex; gap: 8px; margin-bottom: 16px; }
+
+.knopf {
+  padding: 18px 12px; font-size: 17px; font-weight: bold;
+  color: white; border: none; border-radius: 16px;
+}
+.knopf:active { transform: scale(0.97); }
+
+.gruen { flex: 2; background: #2ea043; }
+.rot { flex: 1; background: #da3633; }
+
+/* Balkendiagramm */
+.diagramm { display: flex; gap: 8px; }
+
+.spalte {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flaeche {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.saeule {
+  width: 100%;
+  min-height: 2px;
+  flex-shrink: 0;
+  background: #2f81f7;
+  border-radius: 6px 6px 0 0;
+}
+.saeule.erreicht { background: #2ea043; }
+
+.ziel {
+  position: absolute;
+  left: -4px; right: -4px;
+  border-top: 2px dashed #d29922;
+}
+
+.wert { font-size: 11px; color: #8b949e; margin-bottom: 4px; }
+.tag { font-size: 12px; color: #8b949e; margin-top: 6px; }
+
+/* ===== Hinweis von oben ===== */
+.hinweis {
+  position: fixed; left: 16px; right: 16px;
+  top: calc(env(safe-area-inset-top) + 12px);
+  background: #d29922; color: #0d1117; font-weight: bold;
+  padding: 14px 16px; border-radius: 14px;
+  transform: translateY(-200%); transition: transform 0.5s;
+  z-index: 10;
+}
+.hinweis.sichtbar { transform: translateY(0); }
