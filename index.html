@@ -5,32 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Nicos Leben</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
 
   <main>
-    <h1>Wasser</h1>
+    <!-- ===== Startseite ===== -->
+    <section id="ansicht-start" class="ansicht">
+      <h1>Nicos Leben</h1>
 
-    <section class="karte">
-      <p class="menge"><span id="heute">0,0</span> / 3,0 Liter</p>
-      <div class="balken"><div id="fortschritt" class="fuellung"></div></div>
-      <p id="flaschen" class="klein">0 von 6 Flaschen</p>
-      <p id="letzte" class="klein">Heute noch nichts getrunken</p>
+      <div class="kacheln">
+        <a href="#wasser" class="kachel kachel-wasser">
+          <span class="kachel-symbol">💧</span>
+          <span class="kachel-titel">Wasser</span>
+          <span id="kachel-wasser-info" class="kachel-info">0,0 / 3,0 L</span>
+        </a>
+
+        <div class="kachel bald">
+          <span class="kachel-symbol">✅</span>
+          <span class="kachel-titel">Todos</span>
+          <span class="kachel-info">Bald verfügbar</span>
+        </div>
+
+        <div class="kachel bald">
+          <span class="kachel-symbol">🥗</span>
+          <span class="kachel-titel">Ernährung</span>
+          <span class="kachel-info">Bald verfügbar</span>
+        </div>
+
+        <div class="kachel bald">
+          <span class="kachel-symbol">👕</span>
+          <span class="kachel-titel">Kleiderschrank</span>
+          <span class="kachel-info">Bald verfügbar</span>
+        </div>
+      </div>
     </section>
 
-    <div class="knopf-reihe">
-      <button id="rueckgaengig" class="knopf rot">↩ Rückgängig</button>
-      <button id="trinken" class="knopf gruen">+ 0,5 L getrunken</button>
-    </div>
+    <!-- ===== Wasser ===== -->
+    <section id="ansicht-wasser" class="ansicht" hidden>
+      <a href="#" class="zurueck">‹ Übersicht</a>
+      <h1>Wasser</h1>
 
-    <section class="karte">
-      <h2>Letzte 7 Tage</h2>
-      <div id="diagramm" class="diagramm"></div>
+      <section class="karte">
+        <p class="menge"><span id="heute">0,0</span> / 3,0 Liter</p>
+        <div class="balken"><div id="fortschritt" class="fuellung"></div></div>
+        <p id="flaschen" class="klein">0 von 6 Flaschen</p>
+        <p id="letzte" class="klein">Heute noch nichts getrunken</p>
+      </section>
+
+      <div class="knopf-reihe">
+        <button id="rueckgaengig" class="knopf rot">↩ Rückgängig</button>
+        <button id="trinken" class="knopf gruen">+ 0,5 L getrunken</button>
+      </div>
+
+      <section class="karte">
+        <h2>Letzte 7 Tage</h2>
+        <div id="diagramm" class="diagramm"></div>
+      </section>
     </section>
   </main>
 
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
