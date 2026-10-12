@@ -2,12 +2,33 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Nicos Leben</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Hallo Nico!</h1>
-  <p>Das ist meine erste eigene Seite.</p>
+  <div id="hinweis" class="hinweis"></div>
+
+  <main>
+    <h1>Wasser</h1>
+
+    <section class="karte">
+      <p class="menge"><span id="heute">0,0</span> / 3,0 Liter</p>
+      <div class="balken"><div id="fortschritt" class="fuellung"></div></div>
+      <p id="flaschen" class="klein">0 von 6 Flaschen</p>
+      <p id="letzte" class="klein">Heute noch nichts getrunken</p>
+    </section>
+
+    <button id="trinken" class="knopf">+ 0,5 L getrunken</button>
+    <button id="rueckgaengig" class="knopf-klein">Letzte Flasche rückgängig</button>
+
+    <section class="karte">
+      <h2>Letzte 7 Tage</h2>
+      <ul id="verlauf"></ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
