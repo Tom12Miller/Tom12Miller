@@ -16,7 +16,6 @@ function todosSpeichern() {
 
 let todos = todosLaden();
 let gewaehlterTag = new Date();   // Tag in der Tagesansicht
-let gezeigterMonat = new Date();  // Monat in der Monatsansicht
 let monatsansicht = false;
 
 // Vergleicht zwei Daten nur nach Tag, ohne Uhrzeit
@@ -84,15 +83,27 @@ function tagAnzeigen() {
 }
 
 // ===== Monatsansicht =====
-function monatAnzeigen() {
-  const jahr = gezeigterMonat.getFullYear();
-  const monat = gezeigterMonat.getMonth();
+// Die Monate stehen untereinander. Beim Scrollen werden oben und unten
+// weitere Monate angehängt, und der Titel oben zeigt den aktuellen Monat.
 
-  document.getElementById("monat-titel").textContent =
-    gezeigterMonat.toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+let ersterMonat = null;  // ältester angezeigter Monat
+let letzterMonat = null; // neuester angezeigter Monat
+const NACHLADEN = 6;     // so viele Monate werden auf einmal angehängt
 
-  const raster = document.getElementById("monat-raster");
-  raster.innerHTML = "";
+// Baut einen einzelnen Monat als Block mit Überschrift und Tagesraster
+function monatsBlock(erster) {
+  const jahr = erster.getFullYear();
+  const monat = erster.getMonth();
+
+  const block = document.createElement("section");
+  block.className = "monat-block";
+  block.dataset.titel = erster.toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+
+  const ueberschrift = document.createElement("h3");
+  ueberschrift.textContent = block.dataset.titel;
+
+  const raster = document.createElement("div");
+  raster.className = "monat-raster";
 
   // An welchem Wochentag beginnt der Monat? (Montag = 0 … Sonntag = 6)
   const ersterWochentag = (new Date(jahr, monat, 1).getDay() + 6) % 7;
@@ -105,40 +116,124 @@ function monatAnzeigen() {
 
   for (let tag = 1; tag <= tageImMonat; tag++) {
     const datum = new Date(jahr, monat, tag);
-    const eintraege = todos[tagesSchluessel(datum)] || [];
-    const offen = eintraege.filter(t => !t.erledigt).length;
-
     const feld = document.createElement("button");
     feld.className = "monat-tag";
     feld.textContent = tag;
-    const wochentag = (datum.getDay() + 6) % 7;
-    if (wochentag >= 5) feld.classList.add("wochenende");
-    if (gleicherTag(datum, new Date())) feld.classList.add("heute");
-    if (gleicherTag(datum, gewaehlterTag)) feld.classList.add("gewaehlt");
-
-    if (eintraege.length > 0) {
-      const punkt = document.createElement("span");
-      punkt.className = "punkt";
-      feld.appendChild(punkt);
-      if (offen === 0) feld.classList.add("alles-erledigt");
-    }
+    feld.dataset.schluessel = tagesSchluessel(datum);
+    if ((datum.getDay() + 6) % 7 >= 5) feld.classList.add("wochenende");
 
     feld.addEventListener("click", () => {
       gewaehlterTag = datum;
       monatsansichtSetzen(false);
+      window.scrollTo(0, 0);
     });
     raster.appendChild(feld);
   }
+
+  block.append(ueberschrift, raster);
+  punkteSetzen(block);
+  return block;
 }
+
+// Markiert heute, den gewählten Tag und Tage mit Aufgaben
+function punkteSetzen(bereich) {
+  const heute = tagesSchluessel(new Date());
+  const gewaehlt = tagesSchluessel(gewaehlterTag);
+
+  bereich.querySelectorAll(".monat-tag").forEach(feld => {
+    const schluessel = feld.dataset.schluessel;
+    const eintraege = todos[schluessel] || [];
+    feld.classList.toggle("heute", schluessel === heute);
+    feld.classList.toggle("gewaehlt", schluessel === gewaehlt);
+    feld.classList.toggle("alles-erledigt", eintraege.length > 0 && eintraege.every(t => t.erledigt));
+
+    let punkt = feld.querySelector(".punkt");
+    if (eintraege.length > 0 && !punkt) {
+      punkt = document.createElement("span");
+      punkt.className = "punkt";
+      feld.appendChild(punkt);
+    } else if (eintraege.length === 0 && punkt) {
+      punkt.remove();
+    }
+  });
+}
+
+const monatPlus = (datum, anzahl) => new Date(datum.getFullYear(), datum.getMonth() + anzahl, 1);
+
+// Baut die Liste rund um den gewählten Monat neu auf und scrollt zu ihm
+function monatAnzeigen() {
+  const liste = document.getElementById("monate-liste");
+  liste.innerHTML = "";
+
+  const start = monatPlus(gewaehlterTag, 0);
+  ersterMonat = monatPlus(start, -NACHLADEN);
+  letzterMonat = monatPlus(start, 12);
+
+  let ziel = null;
+  for (let m = ersterMonat; m <= letzterMonat; m = monatPlus(m, 1)) {
+    const block = monatsBlock(m);
+    if (m.getTime() === start.getTime()) ziel = block;
+    liste.appendChild(block);
+  }
+
+  const kopfHoehe = document.getElementById("todo-kopf").offsetHeight;
+  window.scrollTo(0, ziel.offsetTop - kopfHoehe - 8);
+  monatsTitelAktualisieren();
+}
+
+// Welcher Monat ist gerade oben? Dessen Namen in die Kopfleiste schreiben
+function monatsTitelAktualisieren() {
+  const kopfUnten = document.getElementById("todo-kopf").getBoundingClientRect().bottom;
+  let aktuell = null;
+  for (const block of document.querySelectorAll(".monat-block")) {
+    if (block.getBoundingClientRect().top <= kopfUnten + 60) aktuell = block;
+    else break;
+  }
+  if (aktuell) document.getElementById("monat-titel").textContent = aktuell.dataset.titel;
+}
+
+// Beim Scrollen: Titel anpassen und bei Bedarf Monate nachladen
+let scrollGeplant = false;
+window.addEventListener("scroll", () => {
+  if (!monatsansicht || location.hash !== "#todos" || scrollGeplant) return;
+  scrollGeplant = true;
+
+  requestAnimationFrame(() => {
+    scrollGeplant = false;
+    const liste = document.getElementById("monate-liste");
+
+    // Fast unten angekommen: weitere Monate unten anhängen
+    if (document.documentElement.scrollHeight - (window.scrollY + window.innerHeight) < 1200) {
+      for (let i = 0; i < NACHLADEN; i++) {
+        letzterMonat = monatPlus(letzterMonat, 1);
+        liste.appendChild(monatsBlock(letzterMonat));
+      }
+    }
+
+    // Fast oben angekommen: weitere Monate oben einfügen,
+    // ohne dass die Ansicht dabei springt
+    if (window.scrollY < 600) {
+      const hoeheVorher = liste.offsetHeight;
+      for (let i = 0; i < NACHLADEN; i++) {
+        ersterMonat = monatPlus(ersterMonat, -1);
+        liste.prepend(monatsBlock(ersterMonat));
+      }
+      window.scrollBy(0, liste.offsetHeight - hoeheVorher);
+    }
+
+    monatsTitelAktualisieren();
+  });
+}, { passive: true });
 
 // ===== Umschalten zwischen Tag und Monat =====
 function monatsansichtSetzen(an) {
   monatsansicht = an;
-  if (an) gezeigterMonat = new Date(gewaehlterTag.getFullYear(), gewaehlterTag.getMonth(), 1);
   document.getElementById("todo-tag").hidden = an;
   document.getElementById("todo-monat").hidden = !an;
+  document.getElementById("monat-kopf").hidden = !an;
   document.getElementById("todo-umschalten").textContent = an ? "📋 Tag" : "📅 Monat";
-  todosAktualisieren();
+  if (an) monatAnzeigen(); else tagAnzeigen();
+  todoKachelAnzeigen();
 }
 
 // Kachel auf der Startseite: offene Aufgaben von heute
@@ -151,7 +246,8 @@ function todoKachelAnzeigen() {
 }
 
 function todosAktualisieren() {
-  if (monatsansicht) monatAnzeigen(); else tagAnzeigen();
+  // In der Monatsansicht nur die Markierungen erneuern, damit die Scrollposition bleibt
+  if (monatsansicht) punkteSetzen(document.getElementById("monate-liste")); else tagAnzeigen();
   todoKachelAnzeigen();
 }
 
@@ -171,15 +267,6 @@ document.getElementById("tag-vor").addEventListener("click", () => {
 document.getElementById("zu-heute").addEventListener("click", () => {
   gewaehlterTag = new Date();
   tagAnzeigen();
-});
-
-document.getElementById("monat-zurueck").addEventListener("click", () => {
-  gezeigterMonat = new Date(gezeigterMonat.getFullYear(), gezeigterMonat.getMonth() - 1, 1);
-  monatAnzeigen();
-});
-document.getElementById("monat-vor").addEventListener("click", () => {
-  gezeigterMonat = new Date(gezeigterMonat.getFullYear(), gezeigterMonat.getMonth() + 1, 1);
-  monatAnzeigen();
 });
 
 document.getElementById("todo-formular").addEventListener("submit", (e) => {
