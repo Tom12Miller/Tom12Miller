@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=16">
+  <link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -36,6 +36,12 @@
           <span class="kachel farbe-gelb">💶</span>
           <span class="kachel-titel">Finanzen</span>
           <span id="kachel-finanzen-info" class="kachel-info">Einrichten</span>
+        </a>
+
+        <a href="#schlaf" class="kachel-feld">
+          <span class="kachel farbe-lila">😴</span>
+          <span class="kachel-titel">Schlaf</span>
+          <span id="kachel-schlaf-info" class="kachel-info">Eintragen</span>
         </a>
       </div>
 
@@ -202,6 +208,48 @@
       </section>
     </section>
 
+    <!-- ===== Schlaf ===== -->
+    <section id="ansicht-schlaf" class="ansicht" hidden>
+      <a href="#" class="zurueck">‹ Übersicht</a>
+      <h1>Schlaf</h1>
+
+      <section class="karte schlaf-karte">
+        <div class="datum-leiste">
+          <button id="nacht-zurueck" class="pfeil" aria-label="Nacht davor">‹</button>
+          <div class="datum-mitte">
+            <h2 id="nacht-titel">Letzte Nacht</h2>
+            <p id="nacht-datum" class="klein"></p>
+          </div>
+          <button id="nacht-vor" class="pfeil" aria-label="Nacht danach">›</button>
+        </div>
+
+        <div class="schlaf-stepper">
+          <button id="schlaf-minus" class="stepper-knopf" aria-label="30 Minuten weniger">−</button>
+          <button id="schlaf-wert" class="schlaf-wert">
+            <span id="schlaf-stunden">8,0</span><small>Stunden</small>
+          </button>
+          <button id="schlaf-plus" class="stepper-knopf" aria-label="30 Minuten mehr">+</button>
+        </div>
+        <p id="schlaf-status" class="klein schlaf-status"></p>
+        <button id="schlaf-loeschen" class="text-knopf" hidden>Eintrag löschen</button>
+      </section>
+
+      <section class="karte">
+        <h2>Letzte 7 Nächte <small class="ziel-info">Ziel: 8 Std.</small></h2>
+        <div id="schlaf-diagramm" class="diagramm schlaf-diagramm"></div>
+        <div class="schlaf-legende legende">
+          <span><i class="schlaf-gut"></i>ab 8 Std.</span>
+          <span><i class="schlaf-knapp"></i>7–8 Std.</span>
+          <span><i class="schlaf-wenig"></i>unter 7 Std.</span>
+        </div>
+        <div class="schlaf-summen">
+          <div class="bilanz-zeile"><span>Durchschnitt</span><span id="schlaf-schnitt">–</span></div>
+          <div class="bilanz-zeile minus"><span>Pro Nacht zum Ziel</span><span id="schlaf-abweichung">–</span></div>
+          <div class="bilanz-zeile minus"><span>Summe zum Ziel</span><span id="schlaf-summe">–</span></div>
+        </div>
+      </section>
+    </section>
+
     <!-- ===== Wasser ===== -->
     <section id="ansicht-wasser" class="ansicht" hidden>
       <a href="#" class="zurueck">‹ Übersicht</a>
@@ -226,8 +274,9 @@
     </section>
   </main>
 
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
   <script src="todos.js?v=4"></script>
   <script src="finanzen.js?v=2"></script>
+  <script src="schlaf.js?v=2"></script>
 </body>
 </html>

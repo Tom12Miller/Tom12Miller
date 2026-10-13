@@ -372,6 +372,39 @@ h2 { font-size: 18px; margin-top: 0; }
 }
 .quelle { margin-top: 12px; font-size: 11.5px; opacity: 0.85; }
 
+/* ===== Schlaf ===== */
+.schlaf-karte .datum-leiste { margin-top: 0; }
+.schlaf-karte h2 { margin: 0; }
+.schlaf-stepper { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 14px 0 6px; }
+.stepper-knopf {
+  width: 64px; height: 64px; flex-shrink: 0; font-size: 34px; line-height: 1;
+  color: white; background: #9b8ac4; border: none; border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(35, 64, 79, 0.15);
+}
+.stepper-knopf:active { transform: scale(0.94); }
+.schlaf-wert {
+  display: flex; flex-direction: column; align-items: center; min-width: 120px;
+  background: none; border: none; padding: 0; color: #23404f;
+}
+.schlaf-wert span { font-size: 48px; font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.schlaf-wert small { font-size: 14px; color: #4d6b7a; }
+.schlaf-wert.leer span { color: #9fb3bd; }
+.schlaf-status { text-align: center; margin: 6px 0 0; min-height: 1.4em; }
+
+.saeule.schlaf-gut, i.schlaf-gut { background: #72bf95; }
+.saeule.schlaf-knapp, i.schlaf-knapp { background: #e8c35a; }
+.saeule.schlaf-wenig, i.schlaf-wenig { background: #e08a80; }
+.schlaf-diagramm .abw { font-size: 10.5px; font-weight: 600; margin-top: 2px; }
+.schlaf-diagramm .abw.plus { color: #3f8a63; }
+.schlaf-diagramm .abw.minus { color: #c4554b; }
+.schlaf-legende { margin-top: 12px; }
+.schlaf-summen { margin-top: 10px; }
+.text-knopf {
+  display: block; margin: 8px auto 0; padding: 4px 10px; font-size: 14px;
+  color: #b0857f; background: none; border: none;
+}
+.ziel-info { font-size: 13px; font-weight: 400; color: #b07a2e; margin-left: 6px; }
+
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }
 .backup .knopf-reihe { margin: 14px 0 0; }
