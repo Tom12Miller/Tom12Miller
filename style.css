@@ -163,3 +163,36 @@ h2 { font-size: 18px; margin-top: 0; }
   z-index: 10;
 }
 .hinweis.sichtbar { transform: translateY(0); }
+.hinweis { cursor: pointer; }
+
+/* ===== Öffnungsanimation der Kacheln ===== */
+/* Die Kachel zieht sich auf Bildschirmgröße auf und wird zur Modul-Seite */
+::view-transition-group(kachel-oeffnen) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: 20px;
+  overflow: hidden;
+}
+::view-transition-old(kachel-oeffnen),
+::view-transition-new(kachel-oeffnen) {
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+/* Ersatz-Animation, falls der Browser die obige nicht kann */
+.ansicht.einblenden { animation: einblenden 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes einblenden {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Wer in den iPhone-Einstellungen "Bewegung reduzieren" aktiviert hat, bekommt keine Animation */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  .ansicht.einblenden { animation: none; }
+}

@@ -113,12 +113,22 @@ function hinweisPruefen(heute, ziel) {
   }
 
   feld.textContent = text;
+  clearTimeout(hinweisTimer);
   if (text) {
     setTimeout(() => feld.classList.add("sichtbar"), 300);
+    // Nach 6 Sekunden wieder nach oben gleiten lassen
+    hinweisTimer = setTimeout(() => feld.classList.remove("sichtbar"), 6300);
   } else {
     feld.classList.remove("sichtbar");
   }
 }
+
+let hinweisTimer;
+
+// Antippen schließt den Hinweis sofort
+document.getElementById("hinweis").addEventListener("click", (e) => {
+  e.currentTarget.classList.remove("sichtbar");
+});
 
 // ===== Knöpfe =====
 document.getElementById("trinken").addEventListener("click", () => {
@@ -146,14 +156,62 @@ document.addEventListener("visibilitychange", () => {
 anzeigen();
 
 // ===== Navigation zwischen den Ansichten =====
-function ansichtWechseln() {
-  let ziel = location.hash.replace("#", "") || "start";
-  if (!document.getElementById("ansicht-" + ziel)) ziel = "start";
+let aktuelleAnsicht = null;
 
+// Zeigt nur die gewünschte Ansicht und versteckt alle anderen
+function ansichtZeigen(ziel) {
   document.querySelectorAll(".ansicht").forEach(ansicht => {
     ansicht.hidden = ansicht.id !== "ansicht-" + ziel;
   });
   window.scrollTo(0, 0);
+}
+
+function ansichtWechseln() {
+  let ziel = location.hash.replace("#", "") || "start";
+  if (!document.getElementById("ansicht-" + ziel)) ziel = "start";
+
+  const vorher = aktuelleAnsicht;
+  aktuelleAnsicht = ziel;
+
+  // Beim allerersten Laden ohne Animation
+  if (vorher === null || vorher === ziel) {
+    ansichtZeigen(ziel);
+    return;
+  }
+
+  // Welches Modul wird geöffnet bzw. geschlossen?
+  const oeffnen = vorher === "start";
+  const modul = oeffnen ? ziel : vorher;
+  const kachel = document.querySelector(`a[href="#${modul}"] .kachel`);
+  const seite = document.getElementById("ansicht-" + modul);
+  const ruhigeBewegung = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Ersatz für ältere Browser: einfaches Einblenden
+  if (!document.startViewTransition || !kachel || ruhigeBewegung) {
+    ansichtZeigen(ziel);
+    const neu = document.getElementById("ansicht-" + ziel);
+    neu.classList.remove("einblenden");
+    void neu.offsetWidth;
+    neu.classList.add("einblenden");
+    return;
+  }
+
+  // Die Kachel und die Modul-Seite bekommen denselben Namen.
+  // Der Browser erkennt sie dadurch als "dasselbe Element"
+  // und lässt das eine fließend in das andere übergehen.
+  const NAME = "kachel-oeffnen";
+  (oeffnen ? kachel : seite).style.viewTransitionName = NAME;
+
+  const uebergang = document.startViewTransition(() => {
+    (oeffnen ? kachel : seite).style.viewTransitionName = "";
+    ansichtZeigen(ziel);
+    (oeffnen ? seite : kachel).style.viewTransitionName = NAME;
+  });
+
+  uebergang.finished.finally(() => {
+    kachel.style.viewTransitionName = "";
+    seite.style.viewTransitionName = "";
+  });
 }
 
 window.addEventListener("hashchange", ansichtWechseln);
