@@ -156,7 +156,7 @@ document.addEventListener("visibilitychange", () => {
 anzeigen();
 
 // ===== Navigation zwischen den Ansichten =====
-const APP_VERSION = 11;  // wird bei jeder Änderung erhöht
+const APP_VERSION = 12;  // wird bei jeder Änderung erhöht
 document.getElementById("version").textContent = "Version " + APP_VERSION;
 
 let aktuelleAnsicht = null;

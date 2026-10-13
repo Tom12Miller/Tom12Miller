@@ -211,10 +211,15 @@ h2 { font-size: 18px; margin-top: 0; }
   width: 44px; height: 44px; flex-shrink: 0; font-size: 26px; line-height: 1;
   color: #2d6f8f; background: rgba(255, 255, 255, 0.55); border: none; border-radius: 50%;
 }
-.heute-link {
-  display: block; margin: 0 auto 10px; padding: 4px 10px; font-size: 14px;
-  color: #2d6f8f; background: none; border: none; text-decoration: underline;
+/* Kleiner schwebender Knopf unten rechts, nur sichtbar, wenn nicht heute */
+.heute-knopf {
+  position: fixed; z-index: 8;
+  right: 16px; bottom: calc(env(safe-area-inset-bottom) + 16px);
+  padding: 7px 14px; font-size: 14px; font-weight: 600;
+  color: white; background: #5aa9c9; border: none; border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(35, 64, 79, 0.2);
 }
+.heute-knopf:active { transform: scale(0.95); }
 
 .todo-eingabe { display: flex; gap: 8px; margin-bottom: 10px; }
 

@@ -39,8 +39,11 @@ function tagAnzeigen() {
   else if (gleicherTag(gewaehlterTag, morgen)) titel = "Morgen";
 
   document.getElementById("tag-titel").textContent = titel;
+  // Steht der Wochentag schon im Titel, nicht noch einmal darunter wiederholen
+  const mitWochentag = ["Heute", "Gestern", "Morgen"].includes(titel);
   document.getElementById("tag-datum").textContent = gewaehlterTag.toLocaleDateString("de-DE",
-    { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    mitWochentag ? { weekday: "long", day: "numeric", month: "long", year: "numeric" }
+                 : { day: "numeric", month: "long", year: "numeric" });
   document.getElementById("zu-heute").hidden = gleicherTag(gewaehlterTag, heute);
 
   const liste = document.getElementById("todo-liste");
