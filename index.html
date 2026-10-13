@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -31,6 +31,12 @@
           <span class="kachel farbe-gruen">✅</span>
           <span class="kachel-titel">Todos</span>
           <span id="kachel-todos-info" class="kachel-info">Nichts für heute</span>
+        </a>
+
+        <a href="#finanzen" class="kachel-feld">
+          <span class="kachel farbe-gelb">💶</span>
+          <span class="kachel-titel">Finanzen</span>
+          <span id="kachel-finanzen-info" class="kachel-info">Einrichten</span>
         </a>
 
         <div class="kachel-feld bald">
@@ -66,12 +72,6 @@
         <div class="kachel-feld bald">
           <span class="kachel">🛒</span>
           <span class="kachel-titel">Einkauf</span>
-          <span class="kachel-info">Bald verfügbar</span>
-        </div>
-
-        <div class="kachel-feld bald">
-          <span class="kachel">💶</span>
-          <span class="kachel-titel">Finanzen</span>
           <span class="kachel-info">Bald verfügbar</span>
         </div>
 
@@ -157,6 +157,73 @@
       </div>
     </section>
 
+    <!-- ===== Finanzen ===== -->
+    <section id="ansicht-finanzen" class="ansicht" hidden>
+      <a href="#" class="zurueck">‹ Übersicht</a>
+      <h1>Finanzen</h1>
+
+      <!-- Übersicht: Netto − Fixkosten − Budgets = Frei -->
+      <section class="karte bilanz">
+        <div class="bilanz-zeile"><span>Nettolohn</span><span id="f-netto-anzeige">0,00 €</span></div>
+        <div class="bilanz-zeile minus"><span>− Fixkosten</span><span id="f-fix-summe">0,00 €</span></div>
+        <div class="bilanz-zeile zwischen"><span>Verfügbar</span><span id="f-verfuegbar">0,00 €</span></div>
+        <div class="bilanz-zeile minus"><span>− Budgets</span><span id="f-budget-summe">0,00 €</span></div>
+        <div class="bilanz-zeile frei"><span>Frei</span><span id="f-rest">0,00 €</span></div>
+        <div class="aufteilung">
+          <div id="f-balken-fix" class="teil teil-fix"></div>
+          <div id="f-balken-budget" class="teil teil-budget"></div>
+          <div id="f-balken-rest" class="teil teil-rest"></div>
+        </div>
+        <div class="legende">
+          <span><i class="teil-fix"></i>Fixkosten</span>
+          <span><i class="teil-budget"></i>Budgets</span>
+          <span><i class="teil-rest"></i>Frei</span>
+        </div>
+      </section>
+
+      <section class="karte">
+        <h2>Nettolohn</h2>
+        <div class="geld-eingabe">
+          <input id="f-netto" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off">
+          <span>€ im Monat</span>
+        </div>
+      </section>
+
+      <section class="karte">
+        <h2>Fixkosten &amp; Verträge</h2>
+        <ul id="f-fix-liste" class="geld-liste"></ul>
+        <p id="f-fix-leer" class="klein">Noch keine Fixkosten eingetragen.</p>
+        <form id="f-fix-form" class="geld-form">
+          <input id="f-fix-name" type="text" placeholder="z. B. Miete, Handy, Versicherung" autocomplete="off">
+          <div class="geld-form-zeile">
+            <input id="f-fix-betrag" type="text" inputmode="decimal" placeholder="Betrag €" autocomplete="off">
+            <select id="f-fix-intervall" aria-label="Wie oft">
+              <option value="1">monatlich</option>
+              <option value="3">vierteljährlich</option>
+              <option value="6">halbjährlich</option>
+              <option value="12">jährlich</option>
+            </select>
+            <button type="submit" class="knopf gruen" aria-label="Hinzufügen">+</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="karte">
+        <h2>Budgets</h2>
+        <ul id="f-budget-liste" class="geld-liste"></ul>
+        <p id="f-budget-leer" class="klein">Noch keine Budgets eingetragen.</p>
+        <button id="f-vorschlag" class="knopf hell vorschlag-knopf" hidden>✨ Vorschlag einfügen</button>
+        <form id="f-budget-form" class="geld-form">
+          <input id="f-budget-name" type="text" placeholder="z. B. Lebensmittel, Freizeit" autocomplete="off">
+          <div class="geld-form-zeile">
+            <input id="f-budget-betrag" type="text" inputmode="decimal" placeholder="Betrag € im Monat" autocomplete="off">
+            <button type="submit" class="knopf gruen" aria-label="Hinzufügen">+</button>
+          </div>
+        </form>
+      </section>
+      <p class="klein hinweis-unten">Tipp: Betrag antippen, um ihn zu ändern.</p>
+    </section>
+
     <!-- ===== Wasser ===== -->
     <section id="ansicht-wasser" class="ansicht" hidden>
       <a href="#" class="zurueck">‹ Übersicht</a>
@@ -181,7 +248,8 @@
     </section>
   </main>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
   <script src="todos.js?v=4"></script>
+  <script src="finanzen.js?v=1"></script>
 </body>
 </html>

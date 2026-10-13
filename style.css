@@ -297,6 +297,53 @@ h2 { font-size: 18px; margin-top: 0; }
 .monat-tag.alles-erledigt .punkt { background: #b9d9c4; }
 .monat-tag.heute .punkt { background: white; }
 
+/* ===== Finanzen ===== */
+.bilanz-zeile { display: flex; justify-content: space-between; padding: 5px 0; font-size: 16px; }
+.bilanz-zeile span:last-child { font-variant-numeric: tabular-nums; }
+.bilanz-zeile.minus { color: #4d6b7a; }
+.bilanz-zeile.zwischen { border-top: 1px solid rgba(35, 64, 79, 0.15); margin-top: 4px; padding-top: 9px; font-weight: 600; }
+.bilanz-zeile.frei {
+  border-top: 2px solid rgba(35, 64, 79, 0.25); margin-top: 4px; padding-top: 10px;
+  font-size: 22px; font-weight: 700; color: #3f8a63;
+}
+.bilanz-zeile.frei.minus-betrag { color: #c4554b; }
+
+.aufteilung {
+  display: flex; height: 14px; margin-top: 14px; overflow: hidden;
+  border-radius: 7px; background: rgba(255, 255, 255, 0.7);
+}
+.teil { height: 100%; width: 0; transition: width 0.4s; }
+.teil-fix { background: #d9776f; }
+.teil-budget { background: #e8b84a; }
+.teil-rest { background: #5aa880; }
+.legende { display: flex; gap: 14px; margin-top: 8px; font-size: 12px; color: #4d6b7a; }
+.legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+.geld-eingabe { display: flex; align-items: center; gap: 10px; }
+.geld-eingabe span { color: #4d6b7a; white-space: nowrap; }
+.geld-eingabe input, .geld-form input, .geld-form select {
+  font-size: 16px; padding: 12px 14px; color: #23404f; min-width: 0;
+  background: rgba(255, 255, 255, 0.8); border: none; border-radius: 12px; outline: none;
+}
+.geld-eingabe input { flex: 1; font-size: 20px; font-weight: 600; }
+.geld-eingabe input:focus, .geld-form input:focus, .geld-form select:focus { background: #fff; box-shadow: 0 0 0 2px #5aa9c9; }
+.geld-form select { -webkit-appearance: none; appearance: none; flex: 0 0 auto; }
+
+.geld-liste { list-style: none; padding: 0; margin: 0 0 10px; }
+.geld-liste li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(35, 64, 79, 0.08); }
+.geld-name { flex: 1; min-width: 0; word-break: break-word; }
+.geld-name small { display: block; font-size: 12px; color: #6b8794; }
+.geld-betrag {
+  font-size: 16px; font-weight: 600; color: #23404f; font-variant-numeric: tabular-nums;
+  background: none; border: none; padding: 4px 2px; white-space: nowrap;
+}
+.geld-form { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.geld-form-zeile { display: flex; gap: 8px; }
+.geld-form-zeile input { flex: 1; }
+.geld-form .knopf { flex: 0 0 52px; padding: 0; font-size: 24px; }
+.vorschlag-knopf { width: 100%; font-size: 15px; padding: 12px; margin: 4px 0 8px; }
+.hinweis-unten { text-align: center; margin: -4px 0 24px; }
+
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }
 .backup .knopf-reihe { margin: 14px 0 0; }
