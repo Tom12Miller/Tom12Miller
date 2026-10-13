@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -93,6 +93,17 @@
           <span class="kachel-info">Bald verfügbar</span>
         </div>
       </div>
+      <!-- ===== Backup ===== -->
+      <section class="karte backup">
+        <h2>Backup</h2>
+        <p id="backup-info" class="klein">Noch kein Backup erstellt</p>
+        <div class="knopf-reihe">
+          <button id="backup-sichern" class="knopf blau">Sichern</button>
+          <button id="backup-laden" class="knopf hell">Wiederherstellen</button>
+        </div>
+        <input id="backup-datei" type="file" accept="application/json,.json" hidden>
+      </section>
+
       <p id="version" class="version"></p>
     </section>
 
@@ -120,6 +131,6 @@
     </section>
   </main>
 
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

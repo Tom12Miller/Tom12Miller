@@ -196,6 +196,14 @@ h2 { font-size: 18px; margin-top: 0; }
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* ===== Backup ===== */
+.backup { margin-top: 8px; }
+.backup .knopf-reihe { margin: 14px 0 0; }
+.backup .knopf { flex: 1; font-size: 16px; padding: 14px 10px; }
+.blau { background: #5aa9c9; }
+.hell { background: rgba(255, 255, 255, 0.75); color: #2d6f8f; }
+.backup-alt { color: #b5651d; font-weight: 600; }
+
 /* Versionsnummer unten auf der Startseite */
 .version { text-align: center; font-size: 12px; color: #4d6b7a; opacity: 0.7; margin: 0 0 24px; }
 

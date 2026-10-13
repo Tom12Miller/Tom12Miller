@@ -156,7 +156,7 @@ document.addEventListener("visibilitychange", () => {
 anzeigen();
 
 // ===== Navigation zwischen den Ansichten =====
-const APP_VERSION = 7;  // wird bei jeder Änderung erhöht
+const APP_VERSION = 8;  // wird bei jeder Änderung erhöht
 document.getElementById("version").textContent = "Version " + APP_VERSION;
 
 let aktuelleAnsicht = null;
@@ -254,6 +254,92 @@ function ansichtWechseln() {
 
 window.addEventListener("hashchange", ansichtWechseln);
 ansichtWechseln();
+
+// ===== Backup =====
+// Gesichert werden ALLE Daten der App (auch von künftigen Modulen),
+// nicht nur das Wasser. Format: eine JSON-Datei.
+const BACKUP_ZEIT = "letztesBackup";
+
+function backupInfoAnzeigen() {
+  const info = document.getElementById("backup-info");
+  const zeit = Number(localStorage.getItem(BACKUP_ZEIT));
+  if (!zeit) {
+    info.textContent = "Noch kein Backup erstellt";
+    info.classList.add("backup-alt");
+    return;
+  }
+  const tage = Math.floor((Date.now() - zeit) / 86400000);
+  const datum = new Date(zeit).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+  info.textContent = "Letztes Backup: " + datum +
+    (tage === 0 ? " (heute)" : tage === 1 ? " (gestern)" : ` (vor ${tage} Tagen)`);
+  // Nach mehr als 14 Tagen wird der Text orange als Erinnerung
+  info.classList.toggle("backup-alt", tage > 14);
+}
+
+document.getElementById("backup-sichern").addEventListener("click", async () => {
+  const daten = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const schluessel = localStorage.key(i);
+    if (schluessel !== BACKUP_ZEIT) daten[schluessel] = localStorage.getItem(schluessel);
+  }
+  const backup = { app: "nicos-leben", format: 1, erstellt: new Date().toISOString(), daten };
+
+  const name = "leben-backup-" + tagesSchluessel(new Date()) + ".json";
+  const datei = new File([JSON.stringify(backup, null, 2)], name, { type: "application/json" });
+
+  try {
+    // iPhone: Teilen-Menü öffnen ("In Dateien sichern", iCloud, Mail …)
+    if (navigator.canShare && navigator.canShare({ files: [datei] })) {
+      await navigator.share({ files: [datei], title: "Backup Nicos Leben" });
+    } else {
+      // PC: Datei herunterladen
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(datei);
+      link.download = name;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+    localStorage.setItem(BACKUP_ZEIT, Date.now());
+    backupInfoAnzeigen();
+  } catch (fehler) {
+    // Abbrechen im Teilen-Menü ist kein Fehler, dann passiert einfach nichts
+    if (fehler.name !== "AbortError") alert("Backup konnte nicht erstellt werden: " + fehler.message);
+  }
+});
+
+document.getElementById("backup-laden").addEventListener("click", () => {
+  document.getElementById("backup-datei").click();
+});
+
+document.getElementById("backup-datei").addEventListener("change", async (e) => {
+  const datei = e.target.files[0];
+  e.target.value = "";  // damit dieselbe Datei erneut gewählt werden kann
+  if (!datei) return;
+
+  let backup;
+  try {
+    backup = JSON.parse(await datei.text());
+  } catch {
+    alert("Diese Datei ist kein gültiges Backup.");
+    return;
+  }
+  if (!backup || backup.app !== "nicos-leben" || typeof backup.daten !== "object") {
+    alert("Diese Datei ist kein Backup von Nicos Leben.");
+    return;
+  }
+
+  const datum = new Date(backup.erstellt).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "short" });
+  const ok = confirm(`Backup vom ${datum} wiederherstellen?\n\nDie aktuellen Daten in der App werden dabei ersetzt.`);
+  if (!ok) return;
+
+  for (const [schluessel, wert] of Object.entries(backup.daten)) {
+    if (typeof wert === "string") localStorage.setItem(schluessel, wert);
+  }
+  alert("Backup wiederhergestellt.");
+  location.reload();
+});
+
+backupInfoAnzeigen();
 
 // Doppeltippen soll nie zoomen, auch nicht bei schnellen Tipps auf Knöpfe
 document.addEventListener("dblclick", (e) => e.preventDefault(), { passive: false });
