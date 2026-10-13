@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -27,11 +27,11 @@
         </a>
 
         <!-- Kommende Kacheln -->
-        <div class="kachel-feld bald">
-          <span class="kachel">✅</span>
+        <a href="#todos" class="kachel-feld">
+          <span class="kachel farbe-gruen">✅</span>
           <span class="kachel-titel">Todos</span>
-          <span class="kachel-info">Bald verfügbar</span>
-        </div>
+          <span id="kachel-todos-info" class="kachel-info">Nichts für heute</span>
+        </a>
 
         <div class="kachel-feld bald">
           <span class="kachel">🥗</span>
@@ -107,6 +107,52 @@
       <p id="version" class="version"></p>
     </section>
 
+    <!-- ===== Todos ===== -->
+    <section id="ansicht-todos" class="ansicht" hidden>
+      <div class="kopfzeile">
+        <a href="#" class="zurueck">‹ Übersicht</a>
+        <button id="todo-umschalten" class="kopf-knopf">📅 Monat</button>
+      </div>
+
+      <!-- Tagesansicht -->
+      <div id="todo-tag">
+        <div class="datum-leiste">
+          <button id="tag-zurueck" class="pfeil" aria-label="Vortag">‹</button>
+          <div class="datum-mitte">
+            <h1 id="tag-titel">Heute</h1>
+            <p id="tag-datum" class="klein"></p>
+          </div>
+          <button id="tag-vor" class="pfeil" aria-label="Folgetag">›</button>
+        </div>
+        <button id="zu-heute" class="heute-link" hidden>Zurück zu heute</button>
+
+        <form id="todo-formular" class="todo-eingabe">
+          <input id="todo-text" type="text" placeholder="Neue Aufgabe …" autocomplete="off" enterkeyhint="done">
+          <button type="submit" class="knopf gruen" aria-label="Hinzufügen">+</button>
+        </form>
+
+        <section class="karte">
+          <ul id="todo-liste" class="todo-liste"></ul>
+          <p id="todo-leer" class="klein">Keine Aufgaben für diesen Tag.</p>
+        </section>
+      </div>
+
+      <!-- Monatsansicht -->
+      <div id="todo-monat" hidden>
+        <div class="datum-leiste">
+          <button id="monat-zurueck" class="pfeil" aria-label="Vormonat">‹</button>
+          <div class="datum-mitte"><h1 id="monat-titel"></h1></div>
+          <button id="monat-vor" class="pfeil" aria-label="Folgemonat">›</button>
+        </div>
+        <section class="karte">
+          <div class="wochentage">
+            <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span>
+          </div>
+          <div id="monat-raster" class="monat-raster"></div>
+        </section>
+      </div>
+    </section>
+
     <!-- ===== Wasser ===== -->
     <section id="ansicht-wasser" class="ansicht" hidden>
       <a href="#" class="zurueck">‹ Übersicht</a>
@@ -131,6 +177,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
+  <script src="todos.js?v=1"></script>
 </body>
 </html>

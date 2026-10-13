@@ -196,6 +196,64 @@ h2 { font-size: 18px; margin-top: 0; }
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* ===== Todos ===== */
+.kopfzeile { display: flex; justify-content: space-between; align-items: center; }
+.kopf-knopf {
+  font-size: 15px; font-weight: 600; color: #2d6f8f;
+  background: rgba(255, 255, 255, 0.6); border: none; border-radius: 12px; padding: 8px 12px;
+}
+
+.datum-leiste { display: flex; align-items: center; gap: 8px; margin: 10px 0 8px; }
+.datum-mitte { flex: 1; text-align: center; }
+.datum-mitte h1 { margin: 0; }
+.datum-mitte .klein { margin-top: 2px; }
+.pfeil {
+  width: 44px; height: 44px; flex-shrink: 0; font-size: 26px; line-height: 1;
+  color: #2d6f8f; background: rgba(255, 255, 255, 0.55); border: none; border-radius: 50%;
+}
+.heute-link {
+  display: block; margin: 0 auto 10px; padding: 4px 10px; font-size: 14px;
+  color: #2d6f8f; background: none; border: none; text-decoration: underline;
+}
+
+.todo-eingabe { display: flex; gap: 8px; margin-bottom: 16px; }
+.todo-eingabe input {
+  flex: 1; min-width: 0; font-size: 16px; padding: 14px 16px; color: #23404f;
+  background: rgba(255, 255, 255, 0.75); border: none; border-radius: 14px; outline: none;
+}
+.todo-eingabe input:focus { background: #fff; box-shadow: 0 0 0 2px #5aa880; }
+.todo-eingabe .knopf { flex: 0 0 56px; padding: 0; font-size: 26px; }
+
+.todo-liste { list-style: none; padding: 0; margin: 0; }
+.todo-liste li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(35, 64, 79, 0.08); }
+.todo-liste li:last-child { border-bottom: none; }
+.todo-haken {
+  width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%;
+  border: 2px solid #5aa880; background: transparent; color: white; font-size: 16px; padding: 0;
+}
+.erledigt .todo-haken { background: #5aa880; }
+.todo-inhalt { flex: 1; font-size: 16px; word-break: break-word; }
+.erledigt .todo-inhalt { text-decoration: line-through; color: #8aa0ab; }
+.todo-loeschen { flex-shrink: 0; width: 32px; height: 32px; font-size: 18px; color: #b0857f; background: none; border: none; }
+#todo-leer { margin: 4px 0; }
+
+.wochentage, .monat-raster { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+.wochentage span { font-size: 12px; color: #4d6b7a; padding-bottom: 8px; }
+.monat-raster { gap: 4px; }
+.monat-tag {
+  position: relative; aspect-ratio: 1; font-size: 15px; color: #23404f;
+  background: none; border: none; border-radius: 12px; padding: 0;
+}
+.monat-tag.wochenende { color: #6b8794; }
+.monat-tag.heute { background: #5aa880; color: white; font-weight: 700; }
+.monat-tag.gewaehlt:not(.heute) { box-shadow: inset 0 0 0 2px #5aa880; }
+.monat-tag .punkt {
+  position: absolute; left: 50%; bottom: 5px; width: 6px; height: 6px;
+  margin-left: -3px; border-radius: 50%; background: #e0a458;
+}
+.monat-tag.alles-erledigt .punkt { background: #9fcfb0; }
+.monat-tag.heute .punkt { background: white; }
+
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }
 .backup .knopf-reihe { margin: 14px 0 0; }
