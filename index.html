@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -139,6 +139,11 @@
           <input id="todo-text" type="text" placeholder="Neue Aufgabe …" autocomplete="off" enterkeyhint="done">
           <button type="submit" class="knopf gruen" aria-label="Hinzufügen">+</button>
         </form>
+        <div id="prio-wahl" class="prio-wahl" role="radiogroup" aria-label="Priorität">
+          <button type="button" data-prio="1" class="prio-knopf"><span class="prio-punkt prio-1"></span>Hoch</button>
+          <button type="button" data-prio="2" class="prio-knopf aktiv"><span class="prio-punkt prio-2"></span>Mittel</button>
+          <button type="button" data-prio="3" class="prio-knopf"><span class="prio-punkt prio-3"></span>Gering</button>
+        </div>
 
         <section class="karte">
           <ul id="todo-liste" class="todo-liste"></ul>
@@ -176,7 +181,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=10"></script>
-  <script src="todos.js?v=2"></script>
+  <script src="app.js?v=11"></script>
+  <script src="todos.js?v=3"></script>
 </body>
 </html>

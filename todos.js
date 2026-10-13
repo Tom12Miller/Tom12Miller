@@ -1,6 +1,12 @@
 // ===== Todos mit Tages- und Monatsansicht =====
 // Gespeichert wird pro Tag eine Liste von Aufgaben, z. B.
-// { "2026-10-13": [ { id: 1791..., text: "Einkaufen", erledigt: false } ] }
+// { "2026-10-13": [ { id: 1791..., text: "Einkaufen", erledigt: false, prio: 1 } ] }
+// prio: 1 = hoch (rot), 2 = mittel (gelb), 3 = gering (grün)
+
+const PRIO_NAMEN = { 1: "Hoch", 2: "Mittel", 3: "Gering" };
+// Ältere Aufgaben ohne Priorität gelten als "mittel"
+const prioVon = (todo) => todo.prio || 2;
+let gewaehltePrio = 2;
 
 function todosLaden() {
   try {
@@ -41,8 +47,10 @@ function tagAnzeigen() {
   liste.innerHTML = "";
   const eintraege = todos[tagesSchluessel(gewaehlterTag)] || [];
 
-  // Offene Aufgaben zuerst, erledigte unten
-  const sortiert = [...eintraege].sort((a, b) => a.erledigt - b.erledigt);
+  // Sortierung: offene vor erledigten, dann rot → gelb → grün,
+  // bei gleicher Priorität in der Reihenfolge des Anlegens
+  const sortiert = [...eintraege].sort((a, b) =>
+    (a.erledigt - b.erledigt) || (prioVon(a) - prioVon(b)) || (a.id - b.id));
 
   for (const todo of sortiert) {
     const zeile = document.createElement("li");
@@ -54,6 +62,16 @@ function tagAnzeigen() {
     haken.setAttribute("aria-label", todo.erledigt ? "Als offen markieren" : "Als erledigt markieren");
     haken.addEventListener("click", () => {
       todo.erledigt = !todo.erledigt;
+      todosSpeichern();
+      todosAktualisieren();
+    });
+
+    // Farbiger Punkt links; Antippen wechselt die Priorität
+    const prio = document.createElement("button");
+    prio.className = "todo-prio prio-punkt prio-" + prioVon(todo);
+    prio.setAttribute("aria-label", "Priorität: " + PRIO_NAMEN[prioVon(todo)] + " (antippen zum Ändern)");
+    prio.addEventListener("click", () => {
+      todo.prio = prioVon(todo) % 3 + 1;  // hoch → mittel → gering → hoch
       todosSpeichern();
       todosAktualisieren();
     });
@@ -75,7 +93,7 @@ function tagAnzeigen() {
       todosAktualisieren();
     });
 
-    zeile.append(haken, text, loeschen);
+    zeile.append(prio, haken, text, loeschen);
     liste.appendChild(zeile);
   }
 
@@ -146,6 +164,10 @@ function punkteSetzen(bereich) {
     feld.classList.toggle("heute", schluessel === heute);
     feld.classList.toggle("gewaehlt", schluessel === gewaehlt);
     feld.classList.toggle("alles-erledigt", eintraege.length > 0 && eintraege.every(t => t.erledigt));
+    // Der Punkt bekommt die Farbe der wichtigsten offenen Aufgabe
+    const offen = eintraege.filter(t => !t.erledigt);
+    const hoechste = offen.length ? Math.min(...offen.map(prioVon)) : 0;
+    [1, 2, 3].forEach(p => feld.classList.toggle("p" + p, hoechste === p));
 
     let punkt = feld.querySelector(".punkt");
     if (eintraege.length > 0 && !punkt) {
@@ -277,11 +299,26 @@ document.getElementById("todo-formular").addEventListener("submit", (e) => {
 
   const schluessel = tagesSchluessel(gewaehlterTag);
   if (!todos[schluessel]) todos[schluessel] = [];
-  todos[schluessel].push({ id: Date.now(), text, erledigt: false });
+  todos[schluessel].push({ id: Date.now(), text, erledigt: false, prio: gewaehltePrio });
+  prioWaehlen(2);  // für die nächste Aufgabe wieder "mittel" vorauswählen
   todosSpeichern();
   feld.value = "";
   tagAnzeigen();
   todoKachelAnzeigen();
+});
+
+// ===== Priorität beim Anlegen wählen =====
+function prioWaehlen(prio) {
+  gewaehltePrio = prio;
+  document.querySelectorAll(".prio-knopf").forEach(knopf => {
+    const aktiv = Number(knopf.dataset.prio) === prio;
+    knopf.classList.toggle("aktiv", aktiv);
+    knopf.setAttribute("aria-checked", aktiv);
+  });
+}
+
+document.querySelectorAll(".prio-knopf").forEach(knopf => {
+  knopf.addEventListener("click", () => prioWaehlen(Number(knopf.dataset.prio)));
 });
 
 // Beim Öffnen der Todos immer mit dem heutigen Tag starten

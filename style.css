@@ -216,7 +216,26 @@ h2 { font-size: 18px; margin-top: 0; }
   color: #2d6f8f; background: none; border: none; text-decoration: underline;
 }
 
-.todo-eingabe { display: flex; gap: 8px; margin-bottom: 16px; }
+.todo-eingabe { display: flex; gap: 8px; margin-bottom: 10px; }
+
+/* Prioritäten: 1 = hoch (rot), 2 = mittel (gelb), 3 = gering (grün) */
+.prio-wahl { display: flex; gap: 8px; margin-bottom: 16px; }
+.prio-knopf {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 10px 6px; font-size: 15px; color: #23404f;
+  background: rgba(255, 255, 255, 0.45); border: 2px solid transparent; border-radius: 12px;
+}
+.prio-knopf.aktiv { background: rgba(255, 255, 255, 0.85); border-color: #5aa9c9; font-weight: 600; }
+.prio-punkt { display: inline-block; width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.prio-1 { background: #d9645a; }
+.prio-2 { background: #e8b84a; }
+.prio-3 { background: #5aa880; }
+.todo-prio {
+  /* Tippfläche 30 px, sichtbarer Punkt nur 14 px */
+  width: 30px; height: 30px; padding: 8px; margin: 0 -10px 0 -8px;
+  border: none; background-clip: content-box;
+}
+.erledigt .todo-prio { opacity: 0.35; }
 .todo-eingabe input {
   flex: 1; min-width: 0; font-size: 16px; padding: 14px 16px; color: #23404f;
   background: rgba(255, 255, 255, 0.75); border: none; border-radius: 14px; outline: none;
@@ -267,7 +286,10 @@ h2 { font-size: 18px; margin-top: 0; }
   position: absolute; left: 50%; bottom: 5px; width: 6px; height: 6px;
   margin-left: -3px; border-radius: 50%; background: #e0a458;
 }
-.monat-tag.alles-erledigt .punkt { background: #9fcfb0; }
+.monat-tag.p1 .punkt { background: #d9645a; }
+.monat-tag.p2 .punkt { background: #e8b84a; }
+.monat-tag.p3 .punkt { background: #5aa880; }
+.monat-tag.alles-erledigt .punkt { background: #b9d9c4; }
 .monat-tag.heute .punkt { background: white; }
 
 /* ===== Backup ===== */
