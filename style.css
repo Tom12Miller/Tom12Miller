@@ -1,5 +1,9 @@
 * { box-sizing: border-box; }
 
+/* Doppeltippen soll nicht zoomen (z. B. zwei Flaschen schnell hintereinander) */
+html, body, button, a { touch-action: manipulation; }
+button, a { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+
 /* ===== Strand-Hintergrund ===== */
 body {
   margin: 0;

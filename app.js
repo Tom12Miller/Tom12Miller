@@ -156,7 +156,7 @@ document.addEventListener("visibilitychange", () => {
 anzeigen();
 
 // ===== Navigation zwischen den Ansichten =====
-const APP_VERSION = 6;  // wird bei jeder Änderung erhöht
+const APP_VERSION = 7;  // wird bei jeder Änderung erhöht
 document.getElementById("version").textContent = "Version " + APP_VERSION;
 
 let aktuelleAnsicht = null;
@@ -254,6 +254,9 @@ function ansichtWechseln() {
 
 window.addEventListener("hashchange", ansichtWechseln);
 ansichtWechseln();
+
+// Doppeltippen soll nie zoomen, auch nicht bei schnellen Tipps auf Knöpfe
+document.addEventListener("dblclick", (e) => e.preventDefault(), { passive: false });
 
 // ===== Service Worker anmelden =====
 // Sorgt dafür, dass die App immer die neueste Version lädt.
