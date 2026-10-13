@@ -158,3 +158,10 @@ function ansichtWechseln() {
 
 window.addEventListener("hashchange", ansichtWechseln);
 ansichtWechseln();
+
+// ===== Service Worker anmelden =====
+// Sorgt dafür, dass die App immer die neueste Version lädt.
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+    .catch((fehler) => console.log("Service Worker nicht angemeldet:", fehler));
+}
