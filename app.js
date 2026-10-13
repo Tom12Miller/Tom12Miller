@@ -156,7 +156,11 @@ document.addEventListener("visibilitychange", () => {
 anzeigen();
 
 // ===== Navigation zwischen den Ansichten =====
+const APP_VERSION = 6;  // wird bei jeder Änderung erhöht
+document.getElementById("version").textContent = "Version " + APP_VERSION;
+
 let aktuelleAnsicht = null;
+const DAUER = 450;  // Dauer der Öffnungsanimation in Millisekunden
 
 // Zeigt nur die gewünschte Ansicht und versteckt alle anderen
 function ansichtZeigen(ziel) {
@@ -165,6 +169,33 @@ function ansichtZeigen(ziel) {
   });
   window.scrollTo(0, 0);
 }
+
+// Weiches Einblenden einer Ansicht
+function einblenden(ziel) {
+  const neu = document.getElementById("ansicht-" + ziel);
+  neu.classList.remove("einblenden");
+  void neu.offsetWidth;  // zwingt den Browser, die Animation neu zu starten
+  neu.classList.add("einblenden");
+}
+
+// Legt eine Kopie der Kachel als Ebene über alles,
+// an genau dieselbe Stelle wie die echte Kachel
+function ebeneErstellen(kachel) {
+  const ebene = kachel.cloneNode(true);
+  ebene.className = kachel.className + " oeffnen-ebene";
+  document.body.appendChild(ebene);
+  return ebene;
+}
+
+function ebeneSetzen(ebene, rahmen, rundung) {
+  ebene.style.top = rahmen.top + "px";
+  ebene.style.left = rahmen.left + "px";
+  ebene.style.width = rahmen.width + "px";
+  ebene.style.height = rahmen.height + "px";
+  ebene.style.borderRadius = rundung;
+}
+
+const vollbild = () => ({ top: 0, left: 0, width: window.innerWidth, height: window.innerHeight });
 
 function ansichtWechseln() {
   let ziel = location.hash.replace("#", "") || "start";
@@ -179,39 +210,46 @@ function ansichtWechseln() {
     return;
   }
 
-  // Welches Modul wird geöffnet bzw. geschlossen?
   const oeffnen = vorher === "start";
   const modul = oeffnen ? ziel : vorher;
   const kachel = document.querySelector(`a[href="#${modul}"] .kachel`);
-  const seite = document.getElementById("ansicht-" + modul);
   const ruhigeBewegung = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Ersatz für ältere Browser: einfaches Einblenden
-  if (!document.startViewTransition || !kachel || ruhigeBewegung) {
+  if (!kachel || ruhigeBewegung) {
     ansichtZeigen(ziel);
-    const neu = document.getElementById("ansicht-" + ziel);
-    neu.classList.remove("einblenden");
-    void neu.offsetWidth;
-    neu.classList.add("einblenden");
+    if (!ruhigeBewegung) einblenden(ziel);
     return;
   }
 
-  // Die Kachel und die Modul-Seite bekommen denselben Namen.
-  // Der Browser erkennt sie dadurch als "dasselbe Element"
-  // und lässt das eine fließend in das andere übergehen.
-  const NAME = "kachel-oeffnen";
-  (oeffnen ? kachel : seite).style.viewTransitionName = NAME;
+  if (oeffnen) {
+    // Kachel wächst auf Bildschirmgröße, dann erscheint die Modul-Seite
+    const ebene = ebeneErstellen(kachel);
+    ebeneSetzen(ebene, kachel.getBoundingClientRect(), "20px");
+    void ebene.offsetWidth;
+    ebeneSetzen(ebene, vollbild(), "0px");
+    ebene.classList.add("inhalt-weg");
 
-  const uebergang = document.startViewTransition(() => {
-    (oeffnen ? kachel : seite).style.viewTransitionName = "";
-    ansichtZeigen(ziel);
-    (oeffnen ? seite : kachel).style.viewTransitionName = NAME;
-  });
+    setTimeout(() => {
+      ansichtZeigen(ziel);
+      einblenden(ziel);
+      ebene.classList.add("ausblenden");
+      setTimeout(() => ebene.remove(), 300);
+    }, DAUER);
+  } else {
+    // Startseite erscheint, eine Ebene schrumpft vom Vollbild zurück in die Kachel
+    ansichtZeigen("start");
+    const ebene = ebeneErstellen(kachel);
+    ebene.classList.add("inhalt-weg");
+    ebeneSetzen(ebene, vollbild(), "0px");
+    void ebene.offsetWidth;
+    ebene.classList.remove("inhalt-weg");
+    ebeneSetzen(ebene, kachel.getBoundingClientRect(), "20px");
 
-  uebergang.finished.finally(() => {
-    kachel.style.viewTransitionName = "";
-    seite.style.viewTransitionName = "";
-  });
+    setTimeout(() => {
+      ebene.classList.add("ausblenden");
+      setTimeout(() => ebene.remove(), 300);
+    }, DAUER);
+  }
 }
 
 window.addEventListener("hashchange", ansichtWechseln);
