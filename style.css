@@ -344,6 +344,34 @@ h2 { font-size: 18px; margin-top: 0; }
 .vorschlag-knopf { width: 100%; font-size: 15px; padding: 12px; margin: 4px 0 8px; }
 .hinweis-unten { text-align: center; margin: -4px 0 24px; }
 
+/* ===== Gehaltsvergleich ===== */
+.vergleich .klein { line-height: 1.45; }
+.vergleich-feld { margin-top: 10px; }
+.vergleich-feld input { flex: 0 0 42%; font-size: 18px; }
+.vergleich-feld span { white-space: normal; font-size: 14px; line-height: 1.3; }
+.vergleich-feld small { font-size: 12px; color: #6b8794; }
+.vergleich-gross { margin: 18px 0 4px; font-size: 20px; font-weight: 700; line-height: 1.3; color: #2d6f8f; }
+.vergleich-zeile { margin: 0 0 6px; color: #4d6b7a; }
+
+.skala { position: relative; height: 74px; margin: 10px 4px 14px; }
+.skala-linie {
+  position: absolute; left: 0; right: 0; top: 30px; height: 10px; border-radius: 5px;
+  background: linear-gradient(90deg, #e9c9a8 0%, #f0dfb2 35%, #b9dcc4 65%, #86bcd8 100%);
+}
+.skala-marke { position: absolute; top: 26px; transform: translateX(-50%); text-align: center; }
+.skala-marke::before { content: ""; display: block; width: 2px; height: 18px; margin: 0 auto; background: rgba(35, 64, 79, 0.45); }
+.skala-marke span { display: block; margin-top: 3px; font-size: 10.5px; color: #4d6b7a; white-space: nowrap; }
+.skala-du { position: absolute; top: 0; transform: translateX(-50%); transition: left 0.5s; }
+.skala-du span {
+  display: block; padding: 2px 8px; font-size: 12px; font-weight: 700; color: white;
+  background: #2d6f8f; border-radius: 8px; position: relative;
+}
+.skala-du span::after {
+  content: ""; position: absolute; left: 50%; bottom: -6px; margin-left: -6px;
+  border: 6px solid transparent; border-bottom: 0; border-top-color: #2d6f8f;
+}
+.quelle { margin-top: 12px; font-size: 11.5px; opacity: 0.85; }
+
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }
 .backup .knopf-reihe { margin: 14px 0 0; }

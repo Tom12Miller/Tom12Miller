@@ -6,9 +6,10 @@
 function finanzenLaden() {
   try {
     const d = JSON.parse(localStorage.getItem("finanzen")) || {};
-    return { netto: d.netto || 0, fixkosten: d.fixkosten || [], budgets: d.budgets || [] };
+    return { netto: d.netto || 0, fixkosten: d.fixkosten || [], budgets: d.budgets || [],
+             brutto: d.brutto || 0, sonder: d.sonder || 0 };
   } catch (fehler) {
-    return { netto: 0, fixkosten: [], budgets: [] };
+    return { netto: 0, fixkosten: [], budgets: [], brutto: 0, sonder: 0 };
   }
 }
 
@@ -20,10 +21,14 @@ let finanzen = finanzenLaden();
 
 const INTERVALL_NAMEN = { 1: "monatlich", 3: "vierteljährlich", 6: "halbjährlich", 12: "jährlich" };
 
-// "1.234,50" oder "1234.5" → 1234.5   (ungültig → NaN)
+// "1.234,50", "4.000", "1234,5" oder "49.99" → Zahl   (ungültig → NaN)
 function betragLesen(text) {
   let t = String(text).trim().replace(/\s|€/g, "");
-  if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");  // deutsches Format
+  if (t.includes(",")) {
+    t = t.replace(/\./g, "").replace(",", ".");   // deutsch: Punkt = Tausender, Komma = Dezimal
+  } else if (/^\d{1,3}(\.\d{3})+$/.test(t)) {
+    t = t.replace(/\./g, "");                      // "4.000" oder "1.250.000" = Tausenderpunkte
+  }
   const zahl = Number(t);
   return t === "" || isNaN(zahl) || zahl < 0 ? NaN : Math.round(zahl * 100) / 100;
 }
@@ -140,6 +145,7 @@ nettoFeld.addEventListener("input", () => {
   finanzen.netto = isNaN(wert) ? 0 : wert;
   finanzenSpeichern();
   bilanzAnzeigen();
+  vergleichAnzeigen();  // Netto-Anteil im Gehaltsvergleich mitziehen
 });
 
 document.getElementById("f-fix-form").addEventListener("submit", (e) => {
@@ -199,4 +205,101 @@ document.getElementById("f-vorschlag").addEventListener("click", () => {
   finanzenAnzeigen();
 });
 
+// ===== Gehaltsvergleich mit Deutschland =====
+// Quelle: Statistisches Bundesamt (Destatis), Pressemitteilung Nr. 113 vom 1. April 2026.
+// Bruttojahresverdienste 2025 von Vollzeitbeschäftigten, einschließlich Sonderzahlungen.
+// Destatis veröffentlicht neue Zahlen ungefähr jedes Frühjahr; dann hier aktualisieren.
+const VERGLEICH = {
+  jahr: 2025,
+  quelle: "Statistisches Bundesamt, Pressemitteilung Nr. 113 vom 1. April 2026",
+  median: 54066,
+  durchschnitt: 64441,
+  // [Prozent der Vollzeitbeschäftigten, die höchstens so viel verdienen, Jahresbrutto]
+  perzentile: [[10, 33828], [30, 44215], [50, 54066], [80, 80000], [90, 100719], [99, 219110]]
+};
+
+// Schätzt, wie viel Prozent weniger verdienen, indem zwischen den
+// bekannten Grenzen geradlinig verbunden wird (Näherung, daher "ca.")
+function perzentilSchaetzen(jahresbrutto) {
+  const p = VERGLEICH.perzentile;
+  if (jahresbrutto < p[0][1]) return { unter: true };
+  if (jahresbrutto >= p[p.length - 1][1]) return { ueber: true };
+  for (let i = 0; i < p.length - 1; i++) {
+    const [p1, w1] = p[i], [p2, w2] = p[i + 1];
+    if (jahresbrutto < w2) return { wert: Math.round(p1 + (p2 - p1) * (jahresbrutto - w1) / (w2 - w1)) };
+  }
+}
+
+const euroRund = (zahl) => zahl.toLocaleString("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+
+function vergleichAnzeigen() {
+  document.getElementById("f-vgl-quelle").textContent =
+    `Quelle: ${VERGLEICH.quelle}. Werte für ${VERGLEICH.jahr}, nur Vollzeit, inklusive Sonderzahlungen. ` +
+    "Die Einordnung in Prozent ist eine Schätzung.";
+
+  const bereich = document.getElementById("f-vergleich");
+  if (!(finanzen.brutto > 0)) { bereich.hidden = true; return; }
+  bereich.hidden = false;
+
+  const jahr = finanzen.brutto * 12 + (finanzen.sonder || 0);
+  const rang = perzentilSchaetzen(jahr);
+  const abstand = (jahr / VERGLEICH.median - 1) * 100;
+
+  let rangText;
+  if (rang.unter) rangText = "Du gehörst zu den unteren 10 % der Vollzeitbeschäftigten.";
+  else if (rang.ueber) rangText = "Du gehörst zum obersten 1 % der Vollzeitbeschäftigten. 🚀";
+  else rangText = `Du verdienst mehr als ca. ${rang.wert} % der Vollzeitbeschäftigten.`;
+  document.getElementById("f-vgl-rang").textContent = rangText;
+
+  const prozent = Math.abs(abstand).toLocaleString("de-DE", { maximumFractionDigits: 0 });
+  document.getElementById("f-vgl-median").textContent = Math.abs(abstand) < 1
+    ? "Damit liegst du genau beim mittleren Gehalt."
+    : `Das sind ${prozent} % ${abstand > 0 ? "mehr" : "weniger"} als das mittlere Gehalt.`;
+
+  document.getElementById("f-vgl-jahr").textContent = euroRund(jahr);
+  document.getElementById("f-vgl-med-wert").textContent = euroRund(VERGLEICH.median);
+  document.getElementById("f-vgl-avg-wert").textContent = euroRund(VERGLEICH.durchschnitt);
+
+  // Netto-Anteil, falls auch der Nettolohn eingetragen ist
+  const quoteZeile = document.getElementById("f-vgl-quote-zeile");
+  quoteZeile.hidden = !(finanzen.netto > 0);
+  if (finanzen.netto > 0) {
+    document.getElementById("f-vgl-quote").textContent =
+      Math.round((finanzen.netto / finanzen.brutto) * 100) + " %";
+  }
+
+  // Skala von 0 bis 120.000 € mit Markierungen
+  const MAX = 120000;
+  const pos = (wert) => Math.min(wert / MAX, 1) * 100 + "%";
+  const marken = document.getElementById("f-skala-marken");
+  marken.innerHTML = "";
+  [["10 %", 33828], ["Median", VERGLEICH.median], ["Ø", VERGLEICH.durchschnitt], ["Top 10 %", 100719]]
+    .forEach(([name, wert]) => {
+      const marke = document.createElement("div");
+      marke.className = "skala-marke";
+      marke.style.left = pos(wert);
+      const text = document.createElement("span");
+      text.textContent = name;
+      marke.appendChild(text);
+      marken.appendChild(marke);
+    });
+  document.getElementById("f-skala-du").style.left = pos(jahr);
+}
+
+// Eingabefelder für Brutto und Sonderzahlungen
+[["f-brutto", "brutto"], ["f-sonder", "sonder"]].forEach(([id, feldname]) => {
+  const feld = document.getElementById(id);
+  if (finanzen[feldname] > 0) {
+    feld.value = finanzen[feldname].toLocaleString("de-DE",
+      { minimumFractionDigits: finanzen[feldname] % 1 ? 2 : 0, maximumFractionDigits: 2 });
+  }
+  feld.addEventListener("input", () => {
+    const wert = betragLesen(feld.value);
+    finanzen[feldname] = isNaN(wert) ? 0 : wert;
+    finanzenSpeichern();
+    vergleichAnzeigen();
+  });
+});
+
 finanzenAnzeigen();
+vergleichAnzeigen();

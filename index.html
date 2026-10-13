@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -222,6 +222,38 @@
         </form>
       </section>
       <p class="klein hinweis-unten">Tipp: Betrag antippen, um ihn zu ändern.</p>
+
+      <!-- ===== Gehaltsvergleich mit Deutschland ===== -->
+      <section class="karte vergleich">
+        <h2>Gehaltsvergleich Deutschland</h2>
+        <p class="klein">Vergleich mit allen Vollzeitbeschäftigten in Deutschland. Die amtliche Statistik nennt Bruttowerte, deshalb brauchst du hier dein Brutto.</p>
+        <div class="geld-eingabe vergleich-feld">
+          <input id="f-brutto" type="text" inputmode="decimal" placeholder="0" autocomplete="off">
+          <span>€ brutto im Monat</span>
+        </div>
+        <div class="geld-eingabe vergleich-feld">
+          <input id="f-sonder" type="text" inputmode="decimal" placeholder="0" autocomplete="off">
+          <span>€ Sonderzahlungen im Jahr<br><small>z. B. Urlaubs- und Weihnachtsgeld</small></span>
+        </div>
+
+        <div id="f-vergleich" hidden>
+          <p id="f-vgl-rang" class="vergleich-gross"></p>
+          <p id="f-vgl-median" class="vergleich-zeile"></p>
+
+          <div class="skala">
+            <div class="skala-linie"></div>
+            <div id="f-skala-marken"></div>
+            <div id="f-skala-du" class="skala-du"><span>Du</span></div>
+          </div>
+
+          <div class="bilanz-zeile"><span>Dein Jahresbrutto</span><span id="f-vgl-jahr"></span></div>
+          <div class="bilanz-zeile minus"><span>Median Deutschland</span><span id="f-vgl-med-wert"></span></div>
+          <div class="bilanz-zeile minus"><span>Durchschnitt Deutschland</span><span id="f-vgl-avg-wert"></span></div>
+          <div id="f-vgl-quote-zeile" class="bilanz-zeile minus"><span>Davon bleibt dir netto</span><span id="f-vgl-quote"></span></div>
+          <p class="klein">Der Median ist das „mittlere“ Gehalt: Die Hälfte verdient mehr, die Hälfte weniger. Er ist aussagekräftiger als der Durchschnitt, weil wenige Spitzenverdiener den Durchschnitt nach oben ziehen.</p>
+        </div>
+        <p id="f-vgl-quelle" class="klein quelle"></p>
+      </section>
     </section>
 
     <!-- ===== Wasser ===== -->
@@ -248,8 +280,8 @@
     </section>
   </main>
 
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=14"></script>
   <script src="todos.js?v=4"></script>
-  <script src="finanzen.js?v=1"></script>
+  <script src="finanzen.js?v=2"></script>
 </body>
 </html>
