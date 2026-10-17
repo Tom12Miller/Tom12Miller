@@ -70,6 +70,7 @@ h2 { font-size: 18px; margin-top: 0; }
 .farbe-gelb   { background: #f0dfb2; }   /* für später */
 .farbe-lila   { background: #d4c7e6; }   /* für später */
 .farbe-rosa   { background: #eccbd0; }   /* für später */
+.farbe-fokus  { background: #f2c4a8; }   /* sanftes Abendrot */
 
 /* Ausgegraute Kacheln */
 .bald .kachel {
@@ -404,6 +405,59 @@ h2 { font-size: 18px; margin-top: 0; }
   color: #b0857f; background: none; border: none;
 }
 .ziel-info { font-size: 13px; font-weight: 400; color: #b07a2e; margin-left: 6px; }
+
+/* ===== Fokuswochen ===== */
+.fokus-leiste { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 14px; }
+.fokus-punkt {
+  position: relative; aspect-ratio: 1; padding: 0; border: none; border-radius: 12px;
+  font-size: 13px; font-weight: 600; color: #23404f; background: rgba(255, 255, 255, 0.55); overflow: hidden;
+}
+.fokus-punkt .fuell { position: absolute; left: 0; right: 0; bottom: 0; background: #b9dcc4; z-index: 0; }
+.fokus-punkt.voll .fuell { background: #72bf95; }
+.fokus-punkt span { position: relative; z-index: 1; }
+.fokus-punkt.heute { box-shadow: inset 0 0 0 2px #e0875a; }
+.fokus-punkt.gewaehlt { background: #2d6f8f; color: white; }
+.fokus-punkt.gewaehlt .fuell { opacity: 0.35; }
+.fokus-punkt.zukunft { color: #7f98a3; }
+
+.fokus-tag { touch-action: pan-y; }
+.fokus-tag h2 { margin: 0; }
+.fokus-tag.rein-links { animation: reinLinks 0.28s ease-out; }
+.fokus-tag.rein-rechts { animation: reinRechts 0.28s ease-out; }
+@keyframes reinLinks { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+@keyframes reinRechts { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: none; } }
+
+.fokus-countdown {
+  text-align: center; margin: 4px 0 12px; padding: 8px; border-radius: 12px;
+  background: rgba(242, 196, 168, 0.45); color: #8a4b2b; font-weight: 600;
+}
+.fokus-fortschritt { margin: 4px 0 10px; }
+.fokus-fortschritt .fuellung { background: #e0875a; }
+.fokus-zahlen { display: flex; justify-content: space-between; margin-top: 6px; font-size: 13px; color: #4d6b7a; }
+
+.fokus-liste { list-style: none; padding: 0; margin: 0; }
+.fokus-liste li {
+  display: flex; align-items: center; gap: 12px; padding: 10px 8px; margin: 0 -8px;
+  border-bottom: 1px solid rgba(35, 64, 79, 0.08); border-radius: 12px;
+}
+.fokus-liste li:last-child { border-bottom: none; }
+.fokus-zeit { flex: 0 0 46px; font-size: 13px; font-weight: 600; color: #4d6b7a; font-variant-numeric: tabular-nums; }
+.fokus-symbol { flex: 0 0 26px; font-size: 20px; text-align: center; }
+.fokus-text { flex: 1; min-width: 0; }
+.fokus-text b { display: block; font-size: 15.5px; font-weight: 600; }
+.fokus-text small { display: block; font-size: 12.5px; color: #6b8794; }
+.fokus-liste .todo-haken { border-color: #e0875a; }
+.fokus-liste .erledigt .todo-haken { background: #e0875a; }
+.fokus-liste .erledigt .fokus-text b { text-decoration: line-through; color: #8aa0ab; }
+.fokus-liste li.jetzt { background: rgba(242, 196, 168, 0.35); }
+.fokus-liste li.jetzt .fokus-zeit::after {
+  content: "jetzt"; display: block; font-size: 10px; color: #c2643a; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.fokus-liste li.art-lernen .fokus-text b { color: #2d6f8f; }
+.fokus-liste .todo-haken:disabled { opacity: 0.35; }
+
+.fokus-morgen h2 { margin-bottom: 6px; }
+.fokus-morgen .klein { margin-top: 2px; }
 
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }

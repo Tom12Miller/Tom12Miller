@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=18">
+  <link rel="stylesheet" href="style.css?v=19">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -20,6 +20,12 @@
 
       <div class="kacheln">
         <!-- Aktive Kacheln -->
+        <a href="#fokus" class="kachel-feld">
+          <span class="kachel farbe-fokus">🎯</span>
+          <span class="kachel-titel">Fokuswochen</span>
+          <span id="kachel-fokus-info" class="kachel-info">Start am 19.10.</span>
+        </a>
+
         <a href="#wasser" class="kachel-feld">
           <span class="kachel farbe-wasser">💧</span>
           <span class="kachel-titel">Wasser</span>
@@ -250,6 +256,48 @@
       </section>
     </section>
 
+    <!-- ===== Fokuswochen (19.10.–01.11.) ===== -->
+    <section id="ansicht-fokus" class="ansicht" hidden>
+      <a href="#" class="zurueck">‹ Übersicht</a>
+      <h1>Fokuswochen</h1>
+
+      <!-- Leiste mit allen 14 Tagen -->
+      <div id="fokus-leiste" class="fokus-leiste"></div>
+
+      <!-- Der gewählte Tag; nach links/rechts wischen zum Blättern -->
+      <section id="fokus-tag" class="karte fokus-tag">
+        <div class="datum-leiste">
+          <button id="fokus-zurueck" class="pfeil" aria-label="Vorheriger Tag">‹</button>
+          <div class="datum-mitte">
+            <h2 id="fokus-titel"></h2>
+            <p id="fokus-datum" class="klein"></p>
+          </div>
+          <button id="fokus-vor" class="pfeil" aria-label="Nächster Tag">›</button>
+        </div>
+        <p id="fokus-countdown" class="fokus-countdown" hidden></p>
+
+        <div class="fokus-fortschritt">
+          <div class="balken"><div id="fokus-balken" class="fuellung"></div></div>
+          <div class="fokus-zahlen">
+            <span id="fokus-prozent"></span>
+            <span id="fokus-lernzeit"></span>
+          </div>
+        </div>
+
+        <ul id="fokus-liste" class="fokus-liste"></ul>
+      </section>
+
+      <section id="fokus-morgen" class="karte fokus-morgen"></section>
+
+      <section class="karte">
+        <h2>Gesamt</h2>
+        <div class="bilanz-zeile"><span>Erledigt</span><span id="fokus-gesamt">–</span></div>
+        <div class="bilanz-zeile minus"><span>Lernstunden</span><span id="fokus-lern-gesamt">–</span></div>
+        <div class="bilanz-zeile minus"><span>Sporteinheiten</span><span id="fokus-sport-gesamt">–</span></div>
+        <div class="bilanz-zeile minus"><span>Tage mit mind. 4 Std. Lernen</span><span id="fokus-lerntage">–</span></div>
+      </section>
+    </section>
+
     <!-- ===== Wasser ===== -->
     <section id="ansicht-wasser" class="ansicht" hidden>
       <a href="#" class="zurueck">‹ Übersicht</a>
@@ -274,9 +322,10 @@
     </section>
   </main>
 
-  <script src="app.js?v=16"></script>
+  <script src="app.js?v=17"></script>
   <script src="todos.js?v=4"></script>
   <script src="finanzen.js?v=2"></script>
   <script src="schlaf.js?v=2"></script>
+  <script src="fokus.js?v=1"></script>
 </body>
 </html>
