@@ -183,9 +183,16 @@ function fokusTagAnzeigen() {
     const haken = document.createElement("button");
     haken.className = "todo-haken";
     haken.textContent = erledigt.includes(punkt.id) ? "✓" : "";
-    haken.disabled = !abhakbar;
+    if (!abhakbar) haken.classList.add("gesperrt");
     haken.setAttribute("aria-label", punkt.titel + (erledigt.includes(punkt.id) ? " – erledigt" : " – abhaken"));
-    haken.addEventListener("click", () => fokusUmschalten(punkt.id));
+    haken.addEventListener("click", () => {
+      if (abhakbar) { fokusUmschalten(punkt.id); return; }
+      // Statt stumm zu bleiben, kurz erklären, warum es nicht geht
+      const start = heuteIndex() < 0;
+      fokusHinweis(start
+        ? "Abhaken geht ab dem Start am Montag, 19.10. 💪"
+        : "Diesen Tag kannst du erst abhaken, wenn er da ist.");
+    });
 
     zeile.append(zeit, symbol, text, haken);
     liste.appendChild(zeile);
@@ -242,6 +249,15 @@ function fokusAktualisieren() {
   fokusTagAnzeigen();
   fokusMorgenAnzeigen();
   fokusGesamtAnzeigen();
+}
+
+// Kurzer Hinweis oben (nutzt das gleiche Feld wie die Wasser-Erinnerung)
+function fokusHinweis(text) {
+  const feld = document.getElementById("hinweis");
+  feld.textContent = text;
+  feld.classList.add("sichtbar");
+  clearTimeout(hinweisTimer);
+  hinweisTimer = setTimeout(() => feld.classList.remove("sichtbar"), 3000);
 }
 
 // ===== Aktionen =====

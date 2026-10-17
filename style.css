@@ -454,7 +454,7 @@ h2 { font-size: 18px; margin-top: 0; }
   content: "jetzt"; display: block; font-size: 10px; color: #c2643a; text-transform: uppercase; letter-spacing: 0.04em;
 }
 .fokus-liste li.art-lernen .fokus-text b { color: #2d6f8f; }
-.fokus-liste .todo-haken:disabled { opacity: 0.35; }
+.fokus-liste .todo-haken.gesperrt { opacity: 0.35; }
 
 .fokus-morgen h2 { margin-bottom: 6px; }
 .fokus-morgen .klein { margin-top: 2px; }
