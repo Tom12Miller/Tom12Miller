@@ -3,11 +3,12 @@
 // Abgehakt wird pro Tag, welche Einheiten erledigt sind (Position in der Liste):
 // { "2026-10-26": [0] }
 
-// art: "lauf" | "mobility" | "athletik"
+// art: "lauf" | "mobility" | "athletik" | "kettlebell"
 // sek = Dauer in Sekunden, km = ungefähre Distanz, stufe = Intensität 1–3 (Flammen)
 const L = (titel, sek, km, stufe = 1) => ({ art: "lauf", titel, sek, km, stufe });
 const MOB = (sek, uebungen) => ({ art: "mobility", titel: "Mobility Training", sek, uebungen });
 const ATH = (sek, uebungen) => ({ art: "athletik", titel: "Athletik Training", sek, uebungen });
+const KB = (sek) => ({ art: "kettlebell", titel: "Kettlebell-Training", sek });
 const RUHE = [];
 
 const SPORT_WOCHEN = [
@@ -30,7 +31,7 @@ const SPORT_WOCHEN = [
     [ATH(18 * 60 + 25, 5)]                                // So 08.11.
   ]},
   { phase: "Grow", name: "Belastung 3", tage: [
-    [L("Gleichmäßiger lockerer Lauf", 35 * 60, 2.6)],     // Mo 09.11.
+    [KB(30 * 60)],                                        // Mo 09.11. (statt lockerem Lauf)
     RUHE,                                                 // Di 10.11.
     [L("Tempowechsel-Intervalle", 28 * 60, 2.0, 2)],      // Mi 11.11.
     RUHE,                                                 // Do 12.11.
@@ -40,7 +41,7 @@ const SPORT_WOCHEN = [
   ]},
   { phase: "Grow", name: "Ruhewoche", tage: [
     RUHE,                                                 // Mo 16.11.
-    [L("Gleichmäßiger lockerer Lauf", 30 * 60, 2.2)],     // Di 17.11.
+    [KB(30 * 60)],                                        // Di 17.11. (statt lockerem Lauf)
     RUHE,                                                 // Mi 18.11.
     [L("Tempo-Gefühl Lauf", 19 * 60 + 26, 1.4, 2)],       // Do 19.11.
     [L("Gleichmäßiger lockerer Lauf", 35 * 60, 2.6)],     // Fr 20.11.
@@ -48,7 +49,7 @@ const SPORT_WOCHEN = [
     [MOB(10 * 60 + 12, 5)]                                // So 22.11.
   ]},
   { phase: "Grind", name: "Belastung 1", tage: [
-    [L("Gleichmäßiger lockerer Lauf", 30 * 60, 2.2)],     // Mo 23.11.
+    [KB(30 * 60)],                                        // Mo 23.11. (statt lockerem Lauf)
     [L("Grundlagenausdauer", 25 * 60 + 30, 1.9)],         // Di 24.11.
     RUHE,                                                 // Mi 25.11.
     // Für 26.–29.11. waren auf den Screenshots nur die Symbole zu sehen:
@@ -59,8 +60,32 @@ const SPORT_WOCHEN = [
   ]}
 ];
 
+// ===== Verlängerung nach Woche 5 =====
+// Der Plan aus der Lauf-App endet am 29.11. Danach geht es in Drei-Wochen-Blöcken weiter:
+// Belastung 1 (wie Woche 5), Belastung 2 (wie Woche 3), Ruhewoche (wie Woche 4).
+const VORLAGEN = [
+  { quelle: 4, name: "Belastung 1" },
+  { quelle: 2, name: "Belastung 2" },
+  { quelle: 3, name: "Ruhewoche" }
+];
+const PLAN_WOCHEN = 13; // bis einschließlich 24.01.2027, bei Bedarf einfach erhöhen
+for (let w = SPORT_WOCHEN.length; w < PLAN_WOCHEN; w++) {
+  const vorlage = VORLAGEN[(w - 4) % 3];
+  SPORT_WOCHEN.push({ phase: "Grind", name: vorlage.name, tage: SPORT_WOCHEN[vorlage.quelle].tage });
+}
+
 const SPORT_START = new Date(2026, 9, 26); // Montag, 26. Oktober 2026
-const SPORT_SYMBOL = { lauf: "🏃", mobility: "🧘", athletik: "💪" };
+const SPORT_SYMBOL = { lauf: "🏃", mobility: "🧘", athletik: "💪", kettlebell: "🏋️" };
+
+// ===== Steigerung =====
+// Ab Woche 5 werden Läufe und Kettlebell-Training länger, und zwar alle 3 Wochen um weitere 10 %:
+// Woche 5–7: +10 %, Woche 8–10: +20 %, Woche 11–13: +30 % …
+// Mobility und Athletik bleiben wie in der Lauf-App.
+const STEIGERUNG_AB_WOCHE = 5;
+const STEIGERUNG_SCHRITT = 0.10;
+const STEIGERUNG_ALLE_WOCHEN = 3;
+const steigerung = (woche) => woche + 1 >= STEIGERUNG_AB_WOCHE
+  ? STEIGERUNG_SCHRITT * (Math.floor((woche + 1 - STEIGERUNG_AB_WOCHE) / STEIGERUNG_ALLE_WOCHEN) + 1) : 0;
 
 // ===== Hilfsfunktionen =====
 function sportLaden() {
@@ -72,7 +97,20 @@ let sportDaten = sportLaden();
 
 const SPORT_TAGE = SPORT_WOCHEN.length * 7;
 const sportDatum = (i) => new Date(SPORT_START.getFullYear(), SPORT_START.getMonth(), SPORT_START.getDate() + i);
-const einheitenAm = (i) => SPORT_WOCHEN[Math.floor(i / 7)].tage[i % 7];
+function einheitenAm(i) {
+  const woche = Math.floor(i / 7);
+  const plus = steigerung(woche);
+  return SPORT_WOCHEN[woche].tage[i % 7].map(e => {
+    if (!plus || !["lauf", "kettlebell"].includes(e.art)) return e;
+    return {
+      ...e,
+      plus,
+      // auf 15 Sekunden bzw. 0,1 km gerundet, damit die Zahlen handlich bleiben
+      sek: e.sek ? Math.round(e.sek * (1 + plus) / 15) * 15 : e.sek,
+      km: e.km ? Math.round(e.km * (1 + plus) * 10) / 10 : e.km
+    };
+  });
+}
 const sportErledigt = (i) => sportDaten[tagesSchluessel(sportDatum(i))] || [];
 
 function sportHeuteIndex() {
@@ -99,7 +137,8 @@ function sportAnzeigen() {
   document.getElementById("sport-wochenzeit").textContent =
     `Woche ${woche + 1} von ${SPORT_WOCHEN.length} · ` +
     sportDatum(woche * 7).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) + "–" +
-    sportDatum(woche * 7 + 6).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" });
+    sportDatum(woche * 7 + 6).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) +
+    (steigerung(woche) ? ` · +${Math.round(steigerung(woche) * 100)} %` : "");
   document.getElementById("sport-woche-zurueck").style.visibility = woche > 0 ? "visible" : "hidden";
   document.getElementById("sport-woche-vor").style.visibility = woche < SPORT_WOCHEN.length - 1 ? "visible" : "hidden";
 
@@ -163,8 +202,10 @@ function sportAnzeigen() {
     const titel = document.createElement("b");
     titel.textContent = e.titel;
     const details = document.createElement("small");
-    if (e.offen) details.textContent = "Details siehe Lauf-App";
-    else if (e.art === "lauf") details.textContent = `${dauerText(e.sek)} · ${kmText(e.km)} · ` + "🔥".repeat(e.stufe);
+    const plusText = e.plus ? ` · +${Math.round(e.plus * 100)} %` : "";
+    if (e.offen) details.textContent = "Details siehe Lauf-App" + (e.plus ? `, dann +${Math.round(e.plus * 100)} %` : "");
+    else if (e.art === "lauf") details.textContent = `${dauerText(e.sek)} · ${kmText(e.km)} · ` + "🔥".repeat(e.stufe) + plusText;
+    else if (e.art === "kettlebell") details.textContent = `${dauerText(e.sek)} · Kraft, Ganzkörper` + plusText;
     else details.textContent = `${dauerText(e.sek)} · ${e.uebungen} Übungen`;
     text.append(titel, details);
 
