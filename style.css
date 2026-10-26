@@ -71,6 +71,7 @@ h2 { font-size: 18px; margin-top: 0; }
 .farbe-lila   { background: #d4c7e6; }   /* für später */
 .farbe-rosa   { background: #eccbd0; }   /* für später */
 .farbe-fokus  { background: #f2c4a8; }   /* sanftes Abendrot */
+.farbe-sport  { background: #a8d8cf; }   /* Meeresgrün */
 
 /* Ausgegraute Kacheln */
 .bald .kachel {
@@ -458,6 +459,27 @@ h2 { font-size: 18px; margin-top: 0; }
 
 .fokus-morgen h2 { margin-bottom: 6px; }
 .fokus-morgen .klein { margin-top: 2px; }
+
+/* ===== Sport ===== */
+#sport-woche h2 { margin: 0; }
+.sport-leiste { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 12px; }
+.sport-tag {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px 0 6px;
+  border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.55); color: #23404f;
+}
+.sport-tag small { font-size: 11px; color: #6b8794; }
+.sport-tag b { font-size: 16px; }
+.sport-tag span { font-size: 14px; line-height: 1.2; min-height: 17px; }
+.sport-tag.fertig { background: #b9dcc4; }
+.sport-tag.heute { box-shadow: inset 0 0 0 2px #3f9c8c; }
+.sport-tag.gewaehlt { background: #2d6f8f; color: white; }
+.sport-tag.gewaehlt small { color: #d6e8f0; }
+.sport-stand { text-align: center; margin: 10px 0 0; }
+.sport-symbol { flex: 0 0 30px; font-size: 22px; text-align: center; }
+.sport-liste .todo-haken { border-color: #3f9c8c; }
+.sport-liste .erledigt .todo-haken { background: #3f9c8c; }
+.sport-liste .todo-haken.gesperrt { opacity: 0.35; }
+.sport-ruhe { color: #4d6b7a; justify-content: center; padding: 14px 0 !important; }
 
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }

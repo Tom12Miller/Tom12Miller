@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -24,6 +24,12 @@
           <span class="kachel farbe-fokus">🎯</span>
           <span class="kachel-titel">Fokuswochen</span>
           <span id="kachel-fokus-info" class="kachel-info">Start am 19.10.</span>
+        </a>
+
+        <a href="#sport" class="kachel-feld">
+          <span class="kachel farbe-sport">🏃</span>
+          <span class="kachel-titel">Sport</span>
+          <span id="kachel-sport-info" class="kachel-info">Trainingsplan</span>
         </a>
 
         <a href="#wasser" class="kachel-feld">
@@ -298,6 +304,38 @@
       </section>
     </section>
 
+    <!-- ===== Sport: Trainingsplan ===== -->
+    <section id="ansicht-sport" class="ansicht" hidden>
+      <a href="#" class="zurueck">‹ Übersicht</a>
+      <h1>Sport</h1>
+
+      <!-- Woche; nach links/rechts wischen wechselt die Woche -->
+      <section id="sport-woche" class="karte fokus-tag">
+        <div class="datum-leiste">
+          <button id="sport-woche-zurueck" class="pfeil" aria-label="Vorherige Woche">‹</button>
+          <div class="datum-mitte">
+            <h2 id="sport-phase"></h2>
+            <p id="sport-wochenzeit" class="klein"></p>
+          </div>
+          <button id="sport-woche-vor" class="pfeil" aria-label="Nächste Woche">›</button>
+        </div>
+        <div id="sport-leiste" class="sport-leiste"></div>
+        <p id="sport-woche-stand" class="klein sport-stand"></p>
+      </section>
+
+      <section class="karte">
+        <h2 id="sport-tag-titel"></h2>
+        <ul id="sport-einheiten" class="fokus-liste sport-liste"></ul>
+      </section>
+
+      <section class="karte">
+        <h2>Gesamter Plan</h2>
+        <div class="bilanz-zeile"><span>Einheiten erledigt</span><span id="sport-gesamt">–</span></div>
+        <div class="bilanz-zeile minus"><span>Gelaufen</span><span id="sport-km">–</span></div>
+        <div class="bilanz-zeile minus"><span>Trainingszeit</span><span id="sport-zeit">–</span></div>
+      </section>
+    </section>
+
     <!-- ===== Wasser ===== -->
     <section id="ansicht-wasser" class="ansicht" hidden>
       <a href="#" class="zurueck">‹ Übersicht</a>
@@ -322,10 +360,11 @@
     </section>
   </main>
 
-  <script src="app.js?v=18"></script>
+  <script src="app.js?v=19"></script>
   <script src="todos.js?v=4"></script>
   <script src="finanzen.js?v=2"></script>
   <script src="schlaf.js?v=2"></script>
   <script src="fokus.js?v=2"></script>
+  <script src="sport.js?v=1"></script>
 </body>
 </html>
