@@ -479,6 +479,7 @@ h2 { font-size: 18px; margin-top: 0; }
 .sport-liste .todo-haken { border-color: #3f9c8c; }
 .sport-liste .erledigt .todo-haken { background: #3f9c8c; }
 .sport-liste .todo-haken.gesperrt { opacity: 0.35; }
+.sport-ablauf { margin-top: 3px; color: #3f7f74 !important; line-height: 1.35; }
 .sport-ruhe { color: #4d6b7a; justify-content: center; padding: 14px 0 !important; }
 
 /* ===== Backup ===== */
