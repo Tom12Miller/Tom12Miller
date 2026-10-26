@@ -482,6 +482,55 @@ h2 { font-size: 18px; margin-top: 0; }
 .sport-ablauf { margin-top: 3px; color: #3f7f74 !important; line-height: 1.35; }
 .sport-ruhe { color: #4d6b7a; justify-content: center; padding: 14px 0 !important; }
 
+/* ===== Sport-Ansicht: dunkles Carbon-Design ===== */
+/* Greift nur, solange die Sport-Ansicht offen ist (:has prüft, ob sie sichtbar ist). */
+body:has(#ansicht-sport:not([hidden])) { background: #131313; color: #e9edef; }
+body:has(#ansicht-sport:not([hidden]))::before {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(63, 209, 181, 0.10), transparent 55%),
+    radial-gradient(ellipse at 50% 120%, rgba(0, 0, 0, 0.9), transparent 60%),
+    /* Carbon-Gewebe */
+    linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px / 20px 20px,
+    linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0 / 20px 20px,
+    linear-gradient(27deg, #222 5px, transparent 5px) 0 10px / 20px 20px,
+    linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px / 20px 20px,
+    linear-gradient(90deg, #1b1b1b 10px, transparent 10px) 0 0 / 20px 20px,
+    linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424) 0 0 / 20px 20px,
+    #131313;
+}
+
+#ansicht-sport h1 { color: #ffffff; letter-spacing: 0.02em; }
+#ansicht-sport .zurueck { color: #3fd1b5; }
+#ansicht-sport .karte {
+  background: rgba(18, 18, 18, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+#ansicht-sport h2 { color: #ffffff; }
+#ansicht-sport .klein, #ansicht-sport .sport-stand { color: #9aa6ad; }
+#ansicht-sport .pfeil { background: rgba(255, 255, 255, 0.07); color: #3fd1b5; }
+#sport-wochenzeit { font-size: 13px; white-space: nowrap; }
+
+#ansicht-sport .sport-tag { background: rgba(255, 255, 255, 0.06); color: #e9edef; }
+#ansicht-sport .sport-tag small { color: #8a959b; }
+#ansicht-sport .sport-tag.fertig { background: rgba(63, 209, 181, 0.22); }
+#ansicht-sport .sport-tag.heute { box-shadow: inset 0 0 0 2px #3fd1b5; }
+#ansicht-sport .sport-tag.gewaehlt { background: #3fd1b5; color: #0d1f1b; }
+#ansicht-sport .sport-tag.gewaehlt small { color: #0d3a31; }
+
+#ansicht-sport .fokus-liste li { border-bottom-color: rgba(255, 255, 255, 0.07); }
+#ansicht-sport .fokus-text b { color: #ffffff; }
+#ansicht-sport .fokus-text small { color: #9aa6ad; }
+#ansicht-sport .sport-ablauf { color: #6fdcc6 !important; }
+#ansicht-sport .erledigt .fokus-text b { color: #6b767c; }
+#ansicht-sport .sport-liste .todo-haken { border-color: #3fd1b5; }
+#ansicht-sport .sport-liste .erledigt .todo-haken { background: #3fd1b5; color: #0d1f1b; }
+#ansicht-sport .sport-ruhe { color: #9aa6ad; }
+
+#ansicht-sport .bilanz-zeile { color: #e9edef; }
+#ansicht-sport .bilanz-zeile.minus { color: #9aa6ad; }
+
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }
 .backup .knopf-reihe { margin: 14px 0 0; }
