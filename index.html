@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <meta name="apple-mobile-web-app-title" content="Leben">
-  <link rel="stylesheet" href="style.css?v=24">
+  <link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
   <div id="hinweis" class="hinweis"></div>
@@ -30,6 +30,12 @@
           <span class="kachel farbe-sport">🏃</span>
           <span class="kachel-titel">Sport</span>
           <span id="kachel-sport-info" class="kachel-info">Trainingsplan</span>
+        </a>
+
+        <a href="#lernen" class="kachel-feld">
+          <span class="kachel farbe-lernen">📚</span>
+          <span class="kachel-titel">Lernen</span>
+          <span id="kachel-lernen-info" class="kachel-info">Lernkarten</span>
         </a>
 
         <a href="#wasser" class="kachel-feld">
@@ -336,6 +342,101 @@
       </section>
     </section>
 
+    <!-- ===== Lernen: Lernkarten ===== -->
+    <section id="ansicht-lernen" class="ansicht" hidden>
+      <a href="#" class="zurueck">‹ Übersicht</a>
+
+      <!-- Alle Stapel -->
+      <div id="lern-uebersicht">
+        <h1>Lernen</h1>
+        <div id="lern-stapel-liste" class="stapel-liste"></div>
+        <button id="lern-neuer-stapel" class="knopf hell lern-breit">+ Neuer Stapel</button>
+      </div>
+
+      <!-- Ein Stapel -->
+      <div id="lern-stapel" hidden>
+        <button id="lern-zu-uebersicht" class="text-link">‹ Alle Stapel</button>
+        <h1 id="lern-stapel-name"></h1>
+        <button id="lern-starten" class="knopf lern-start">▶ Lernen</button>
+
+        <section id="lern-runden-karte" class="karte">
+          <h2>Letzte Runden</h2>
+          <div id="lern-runden"></div>
+        </section>
+
+        <section class="karte">
+          <h2>Karten <small id="lern-anzahl" class="ziel-info"></small></h2>
+          <ul id="lern-karten-liste" class="lern-liste"></ul>
+          <form id="lern-formular" class="geld-form">
+            <input id="lern-frage" type="text" placeholder="Begriff / Frage" autocomplete="off">
+            <textarea id="lern-antwort" rows="3" placeholder="Lösung"></textarea>
+            <div class="geld-form-zeile">
+              <button id="lern-speichern" type="submit" class="knopf gruen lern-breit">+ Karte hinzufügen</button>
+            </div>
+            <button id="lern-abbrechen" type="button" class="text-knopf" hidden>Abbrechen</button>
+          </form>
+        </section>
+
+        <section class="karte">
+          <h2>Mehrere Karten einfügen</h2>
+          <p class="klein">Eine Karte pro Zeile: <b>Begriff | Lösung</b></p>
+          <textarea id="lern-import-text" rows="4" class="lern-import" placeholder="Kapitalwert | Barwert aller Ein- und Auszahlungen …"></textarea>
+          <button id="lern-import" class="knopf hell lern-breit">Einfügen</button>
+        </section>
+
+        <div class="lern-stapel-aktionen">
+          <button id="lern-umbenennen" class="text-knopf">Stapel umbenennen</button>
+          <button id="lern-stapel-loeschen" class="text-knopf">Stapel löschen</button>
+        </div>
+      </div>
+
+      <!-- Lernrunde -->
+      <div id="lern-runde" hidden>
+        <div class="lern-kopf">
+          <span id="lern-fortschritt-text"></span>
+          <span id="lern-richtig-bisher"></span>
+        </div>
+        <div class="balken"><div id="lern-fortschritt" class="fuellung"></div></div>
+
+        <div id="lern-flip" class="lern-flip" role="button" aria-label="Karte umdrehen">
+          <div class="lern-seite lern-vorne">
+            <span class="lern-label">Begriff</span>
+            <p id="lern-vorne"></p>
+          </div>
+          <div class="lern-seite lern-hinten">
+            <span id="lern-hinten-frage" class="lern-label"></span>
+            <p id="lern-hinten-text"></p>
+            <small id="lern-hinten-quelle"></small>
+          </div>
+        </div>
+        <p id="lern-tipp" class="klein lern-tipp">Im Kopf beantworten, dann Karte antippen zum Umdrehen</p>
+
+        <div id="lern-bewerten" class="knopf-reihe" hidden>
+          <button id="lern-nicht-gewusst" class="knopf rot lern-halb">✗ Nicht gewusst</button>
+          <button id="lern-gewusst" class="knopf gruen lern-halb">✓ Gewusst</button>
+        </div>
+        <button id="lern-abbrechen-runde" class="text-knopf">Runde abbrechen</button>
+      </div>
+
+      <!-- Auswertung -->
+      <div id="lern-auswertung" hidden>
+        <h1>Auswertung</h1>
+        <section class="karte lern-ergebnis-karte">
+          <p id="lern-ergebnis" class="lern-ergebnis"></p>
+          <p id="lern-prozent" class="klein"></p>
+          <div class="balken"><div id="lern-ergebnis-balken" class="fuellung"></div></div>
+          <p id="lern-lob" class="lern-lob"></p>
+        </section>
+        <button id="lern-wiederholen" class="knopf rot lern-breit"></button>
+        <button id="lern-neue-runde" class="knopf gruen lern-breit">▶ Neue Runde</button>
+        <section id="lern-falsch-karte" class="karte">
+          <h2>Das solltest du nochmal ansehen</h2>
+          <ul id="lern-falsch-liste" class="lern-falsch"></ul>
+        </section>
+        <button id="lern-zum-stapel" class="text-knopf">‹ Zurück zum Stapel</button>
+      </div>
+    </section>
+
     <!-- ===== Wasser ===== -->
     <section id="ansicht-wasser" class="ansicht" hidden>
       <a href="#" class="zurueck">‹ Übersicht</a>
@@ -360,11 +461,12 @@
     </section>
   </main>
 
-  <script src="app.js?v=22"></script>
+  <script src="app.js?v=23"></script>
   <script src="todos.js?v=4"></script>
   <script src="finanzen.js?v=2"></script>
   <script src="schlaf.js?v=2"></script>
   <script src="fokus.js?v=2"></script>
   <script src="sport.js?v=4"></script>
+  <script src="lernen.js?v=1"></script>
 </body>
 </html>
