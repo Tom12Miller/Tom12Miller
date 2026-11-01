@@ -36,6 +36,65 @@ const START_STAPEL = {
   ]
 };
 
+// ===== Kartenpakete =====
+// Neue Karten, die nachträglich per Code dazukommen. Jedes Paket wird genau einmal
+// in den Zielstapel übernommen (gemerkt in lernen.pakete). Bestehende Karten und
+// Ergebnisse bleiben unverändert; gelöschte Paketkarten kommen nicht zurück.
+const KARTEN_PAKETE = [
+  {
+    id: "notizen-2026-11-01",
+    stapel: START_STAPEL.id,
+    stapelName: START_STAPEL.name,
+    prefix: "nb-",
+    karten: [
+      ["Rückstellungen – wo in der Bilanz und warum?", "Fremdkapital (Passiva). Rückstellungen sind Verpflichtungen gegenüber Dritten, z. B. eine noch nicht bezahlte Steuer. Ins Eigenkapital gehört nur, was den Eigentümern zusteht (Stammkapital, Kapitalrücklage, Gewinn). (Lösung A6/Ü7-2; Kap. 7, Folie 17; Kap. 6, Folie 14)"],
+      ["Forderungen – wo in der Bilanz und warum?", "Umlaufvermögen (Aktiva). Bei einer Forderung schuldet der Kunde uns Geld; sie ist ein Anspruch, also Vermögen. Gegenstück: Verbindlichkeiten = wir schulden Geld = Fremdkapital. (Lösung Ü7-2)"],
+      ["Umsatzerlöse – wo zuordnen?", "Nur in die GuV, denn sie sind ein Ertrag. In der direkten Kapitalflussrechnung stehen stattdessen die „Einzahlungen von Kunden“. Beispiel: Umsatzerlöse 90.000, Einzahlungen von Kunden aber nur 45.000 wegen Verkauf auf Ziel. (Lösung Ü7-2; Kap. 7, Folien 18 und 23)"],
+      ["Gezahlte Zinsen – Zuordnung in der direkten KFR", "Cashflow aus Finanzierungstätigkeit, weil Zinsen der Preis für den Kredit sind. Zusätzlich als Zinsaufwand in der GuV. Investitionstätigkeit = Kauf von Anlagen. (Lösung Ü7-2; Kap. 7, Folie 23)"],
+      ["Was gehört in die GuV? (Ü7-2)", "Alle Aufwendungen und Erträge plus das Ergebnis: Abschreibungen, Umsatzerlöse, gezahlte Zinsen, gezahlte Löhne, Jahresüberschuss. (Lösung Ü7-2)"],
+      ["Drei Ebenen der Grundbegriffe", "1. Zahlung: Auszahlung/Einzahlung = Abfluss/Zufluss liquider Mittel. 2. Erfolg: Aufwand/Ertrag = jede unternehmensbedingte Wertminderung / jeder unternehmensbezogene Wertzuwachs. 3. Betrieb: Kosten/Leistung = betriebsbedingte Wertminderung / betriebsbezogener Wertzuwachs. (Kap. 7, Folie 9)"],
+      ["Verkauf auf Ziel – Zuordnung", "Ertrag und Leistung, keine Einzahlung. „Auf Ziel“ heißt, der Kunde zahlt später; es entsteht eine Forderung. (Lösung Ü7-1 a)"],
+      ["Barverkauf – Zuordnung", "Einzahlung, Ertrag und Leistung. Das Geld fließt sofort. (Lösung Ü7-1 c)"],
+      ["Handelsrechtliche Abschreibung – Zuordnung", "Nur Aufwand. Keine Zahlung; in der Kostenrechnung wird stattdessen die kalkulatorische Abschreibung angesetzt. (Lösung Ü7-1 b; Kap. 7, Folie 26)"],
+      ["Tilgung eines Kredits – Zuordnung", "Nur Auszahlung, kein Aufwand und keine Kosten. Bankguthaben und Schulden sinken um denselben Betrag; der Gewinn ändert sich nicht. Nur die Zinsen sind Aufwand. (Lösung Ü7-1 d; Kap. 7, Folien 16–18)"],
+      ["Lohnzahlung per Überweisung – Zuordnung", "Auszahlung, Aufwand und Kosten. Alle drei Ebenen sind betroffen. (Lösung Ü7-1 e)"],
+      ["Kalkulatorische Abschreibung – Zuordnung", "Nur Kosten. „Kalkulatorisch“ gibt es nur in der Kosten- und Leistungsrechnung, deshalb kein Aufwand und keine Zahlung. Beispiel für Anderskosten. (Lösung Ü7-1 f; Kap. 7, Folie 26)"],
+      ["Spendenzahlung – Zuordnung", "Auszahlung und Aufwand, keine Kosten. Die Spende ist neutraler Aufwand: unternehmens-, aber nicht betriebsbedingt. (Lösung Ü7-1 g; Kap. 7, Folie 26)"],
+      ["Neutraler Aufwand", "Aufwand, der nicht betriebsbedingt ist und deshalb keine Kosten darstellt, z. B. eine Spende. (Kap. 7, Folie 26)"],
+      ["Anderskosten und Zusatzkosten", "Kalkulatorische Kosten, die vom Aufwand abweichen (Anderskosten, z. B. kalkulatorische Abschreibung) oder denen gar kein Aufwand gegenübersteht (Zusatzkosten). Sie sind keine pagatorischen Kosten. (Kap. 7, Folien 26 und 27)"],
+      ["Kostenvergleichsrechnung – Formeln", "Abschreibungen/Jahr = Anschaffungskosten / Nutzungsdauer. Zinsen = Anschaffungskosten / 2 × Zinssatz. Fixkosten = Abschreibungen + Zinsen. Variable Kosten = Löhne + Energie + Wartung. Gesamtkosten = Fixkosten + variable Kosten. (Lösung Ü6-1; Kap. 6, Folie 10)"],
+      ["Warum Zinsen = Anschaffungskosten / 2 × Zinssatz?", "Statisches Verfahren, also Betrachtung eines durchschnittlichen Jahres. Durch die Abschreibung sinkt das gebundene Kapital von den vollen Anschaffungskosten auf null; im Durchschnitt ist die Hälfte gebunden. (Formel: Kap. 6, Folie 10; Begründung: übliche Erklärung, nicht in den Unterlagen)"],
+      ["Ü6-1 Ergebnis", "Roboter 1: Fixkosten 15.429, variable Kosten 21.000, Gesamtkosten 36.429. Roboter 2: Fixkosten 15.000, variable Kosten 26.000, Gesamtkosten 41.000. (Lösung Ü6-1)"],
+      ["Kostenvergleichsrechnung – Entscheidungsregel und Würdigung", "„Wähle die Alternative mit den geringsten Kosten.“ Die Rechnung basiert auf Durchschnittskosten. Ergebnis Ü6-1: Roboter 1 ist mit 36.429 € gegenüber 41.000 € vorzuziehen. (Lösung Ü6-1 b)"],
+      ["Beschreibungsfunktion der BWL", "Auch Deskription. Betriebliche Strukturen, Tatbestände oder Prozesse werden systematisch beschrieben, und zwar durch Strukturierung, Begriffsbildung, Klassifikation oder Typenbildung. Frage: Wie ist etwas tatsächlich? Erster notwendiger Schritt der wissenschaftlichen Erkenntnisgewinnung; klare Begriffe und Definitionen sind notwendig, schaffen für sich allein aber noch keinen Erkenntnisgewinn. (Musterlösung A3)"],
+      ["Erklärungsfunktion der BWL", "Betriebliche Phänomene werden durch das Aufzeigen von Ursache-Wirkungs-Beziehungen erklärt. Frage: Warum ist etwas, wie es ist? Beispiel: Wenn die Mitarbeiter zufrieden sind (Ursache), ist die Arbeitsproduktivität höher (Wirkung). Voraussetzung ist die Beschreibung, also was unter Zufriedenheit zu verstehen ist und wie Arbeitsproduktivität definiert wird. (Musterlösung A3)"],
+      ["Gestaltungsfunktion der BWL", "Auch Präskription. Es werden Handlungsempfehlungen für die Entscheider in Unternehmen formuliert. Frage: Wie sollte etwas sein? Beispiel: Wie hoch soll der gewinnmaximale Absatzpreis in einer bestimmten Marktsituation sein? (Musterlösung A3)"],
+      ["Deskription vs. Präskription – Eselsbrücke", "Deskription = Beschreibung = wie etwas ist. Präskription = Gestaltung = wie etwas sein sollte. „De-“ definiert, was ist; „Prä-“ präsentiert eine Empfehlung."]
+    ]
+  }
+];
+
+function paketeEinspielen(daten) {
+  daten.pakete = daten.pakete || [];
+  let neu = 0;
+  KARTEN_PAKETE.forEach(paket => {
+    if (daten.pakete.includes(paket.id)) return;
+    let stapel = daten.stapel.find(s => s.id === paket.stapel);
+    if (!stapel) {
+      stapel = { id: paket.stapel, name: paket.stapelName, karten: [], runden: [] };
+      daten.stapel.push(stapel);
+    }
+    paket.karten.forEach(([frage, antwort], i) => {
+      const id = paket.prefix + (i + 1);
+      if (stapel.karten.some(k => k.id === id)) return;
+      stapel.karten.push({ id, frage, antwort, richtig: 0, falsch: 0 });
+      neu++;
+    });
+    daten.pakete.push(paket.id);
+  });
+  return neu;
+}
+
 function lernenLaden() {
   try {
     const gespeichert = JSON.parse(localStorage.getItem("lernen"));
@@ -54,6 +113,7 @@ function lernenLaden() {
 function lernenSpeichern() { localStorage.setItem("lernen", JSON.stringify(lernen)); }
 
 let lernen = lernenLaden();
+const neuEingespielt = paketeEinspielen(lernen);
 lernenSpeichern();
 
 let aktStapel = null;   // geöffneter Stapel
@@ -372,3 +432,14 @@ window.addEventListener("hashchange", () => {
 });
 
 uebersichtAnzeigen();
+
+// Einmaliger Hinweis, wenn neue Karten dazugekommen sind
+if (neuEingespielt > 0) {
+  setTimeout(() => {
+    const feld = document.getElementById("hinweis");
+    feld.textContent = `📚 ${neuEingespielt} neue Lernkarten hinzugefügt`;
+    feld.classList.add("sichtbar");
+    clearTimeout(hinweisTimer);
+    hinweisTimer = setTimeout(() => feld.classList.remove("sichtbar"), 4000);
+  }, 800);
+}
