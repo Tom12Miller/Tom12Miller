@@ -597,6 +597,38 @@ body:has(#ansicht-sport:not([hidden]))::before {
 .lern-falsch b { display: block; font-size: 15px; }
 .lern-falsch small { display: block; font-size: 13px; color: #4d6b7a; margin-top: 2px; }
 
+/* ===== Kettlebell-Übungen (in der dunklen Sport-Ansicht) ===== */
+.kb-bereich { display: block !important; padding: 0 0 12px !important; background: none !important; }
+.kb-aufklappen {
+  width: 100%; padding: 10px; font-size: 15px; font-weight: 600; border-radius: 12px;
+  color: #3fd1b5; background: rgba(63, 209, 181, 0.10); border: 1px solid rgba(63, 209, 181, 0.35);
+}
+.kb-info { margin: 12px 2px 4px; font-size: 13px; color: #9aa6ad; }
+.kb-uebung {
+  display: flex; gap: 12px; align-items: flex-start; margin-top: 10px; padding: 12px;
+  border-radius: 16px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.kb-grafik {
+  flex: 0 0 96px; width: 96px; height: 96px; border-radius: 12px; background: rgba(0, 0, 0, 0.35);
+  stroke: #e9edef; stroke-width: 3.2; stroke-linecap: round; fill: none;
+}
+.kb-grafik .hinten { stroke: #7d888e; }
+.kb-grafik .kb-kopf { fill: #e9edef; stroke: none; }
+.kb-grafik .kb-gewicht { fill: #3fd1b5; stroke: #0d1f1b; stroke-width: 1.2; }
+.kb-grafik .kb-boden { stroke: #4a5257; stroke-width: 1.5; }
+.kb-grafik .kb-bank { fill: #4a5257; stroke: none; }
+.kb-text { flex: 1; min-width: 0; }
+.kb-text b { display: block; font-size: 15px; color: #ffffff; }
+.kb-text small { display: block; font-size: 12.5px; color: #9aa6ad; margin-top: 2px; }
+.kb-menge {
+  display: inline-block; margin: 7px 0 4px; padding: 3px 9px; border-radius: 8px;
+  font-size: 13.5px; font-weight: 700; color: #0d1f1b; background: #3fd1b5;
+}
+.kb-text ul { margin: 4px 0 0; padding-left: 16px; font-size: 12.5px; color: #c4ccd0; line-height: 1.45; }
+#ansicht-sport .kb-text ul li {
+  display: list-item; padding: 0; margin: 0 0 2px; border: none; border-radius: 0; background: none; gap: 0;
+}
+
 /* ===== Backup ===== */
 .backup { margin-top: 8px; }
 .backup .knopf-reihe { margin: 14px 0 0; }

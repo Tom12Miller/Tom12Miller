@@ -151,9 +151,28 @@ function strukturAusrechnen(e, plus) {
   };
 }
 
+// ===== Kettlebell 3× pro Woche (ab Mo 09.11.) =====
+// Mo = Tag A (Rücken & Bizeps), Mi = Tag B (Brust & Plank), Fr = Tag C (Swings & Core).
+// Ersetzt das bisherige einzelne Kettlebell-Training. Varianten wechseln wöchentlich.
+const KB_START = 14; // Tag-Index von Montag, 09.11.2026
+const KB_WOCHENTAGE = { 0: "A", 2: "B", 4: "C" };
+
 function einheitenAm(i) {
   const woche = Math.floor(i / 7);
   const plus = steigerung(woche);
+  let einheiten = einheitenOhneKb(i, woche, plus);
+  if (i >= KB_START) {
+    einheiten = einheiten.filter(e => e.art !== "kettlebell");
+    const tag = KB_WOCHENTAGE[i % 7];
+    if (tag) {
+      const variante = (woche - Math.floor(KB_START / 7)) % 2;
+      einheiten.push(kbEinheit(tag, variante, plus, SPORT_WOCHEN[woche].name === "Ruhewoche"));
+    }
+  }
+  return einheiten;
+}
+
+function einheitenOhneKb(i, woche, plus) {
   return SPORT_WOCHEN[woche].tage[i % 7].map(e => {
     if (e.struktur) return { ...strukturAusrechnen(e, plus), plus };
     if (!plus || !["lauf", "kettlebell"].includes(e.art)) return e;
@@ -180,7 +199,8 @@ function dauerText(sek) {
 }
 const kmText = (km) => "~" + km.toLocaleString("de-DE") + " km";
 
-let sportTag = 0; // gewählter Tag (0 … 34)
+let sportTag = 0;
+const kbOffen = new Set(); // aufgeklappte Kettlebell-Einheiten // gewählter Tag (0 … 34)
 
 // ===== Anzeige =====
 function sportAnzeigen() {
@@ -260,6 +280,7 @@ function sportAnzeigen() {
     const plusText = e.plus ? ` · +${Math.round(e.plus * 100)}\u00a0%` : "";
     if (e.offen) details.textContent = "Details siehe Lauf-App" + (e.plus ? `, dann +${Math.round(e.plus * 100)} %` : "");
     else if (e.art === "lauf") details.textContent = `${dauerText(e.sek)} · ${kmText(e.km)} · ` + "🔥".repeat(e.stufe) + plusText;
+    else if (e.kb) details.textContent = `ca. ${dauerText(e.sek)} · 6 Übungen · Variante ${e.kb.variante + 1}` + plusText;
     else if (e.art === "kettlebell") details.textContent = `${dauerText(e.sek)} · Kraft, Ganzkörper` + plusText;
     else details.textContent = `${dauerText(e.sek)} · ${e.uebungen} Übungen`;
     text.append(titel, details);
@@ -289,6 +310,24 @@ function sportAnzeigen() {
 
     zeile.append(sym, text, haken);
     liste.appendChild(zeile);
+
+    // Kettlebell-Tag: Übungen mit Grafik zum Aufklappen
+    if (e.kb) {
+      const schluessel = `${sportTag}-${n}`;
+      const bereich = document.createElement("li");
+      bereich.className = "kb-bereich";
+      const knopf = document.createElement("button");
+      knopf.className = "kb-aufklappen";
+      const offen = kbOffen.has(schluessel);
+      knopf.textContent = offen ? "Übungen ausblenden ▴" : "Übungen anzeigen ▾";
+      knopf.addEventListener("click", () => {
+        kbOffen.has(schluessel) ? kbOffen.delete(schluessel) : kbOffen.add(schluessel);
+        sportAnzeigen();
+      });
+      bereich.appendChild(knopf);
+      if (offen) bereich.appendChild(kbUebungenElement(e.kb));
+      liste.appendChild(bereich);
+    }
   });
 
   sportGesamt();
