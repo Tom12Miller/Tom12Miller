@@ -5,7 +5,7 @@
 //   Tag B (Mi) = Drücken: Brust & Plank
 //   Tag C (Fr) = Hüfte: Swings & Core
 // Jeder Tag hat zwei Varianten, die sich wöchentlich abwechseln – so kommen alle 36 Übungen dran.
-// Die Grafiken sind eigene, vereinfachte Strichfiguren (keine Bilder aus dem Video).
+// Die Grafiken sind eigene, vereinfachte und animierte Strichfiguren (keine Bilder aus dem Video).
 
 const KB_SAETZE = 3;          // Sätze pro Übung (Ruhewoche: 2)
 const KB_PAUSE = "60–90 Sek."; // Pause zwischen den Sätzen
@@ -239,41 +239,46 @@ const KB_TAGE = {
   ]}
 };
 
-// ===== Strichfigur zeichnen (SVG, animiert) =====
-function kbGrafik(poseName, zweiKb) {
+// ===== Strichfigur zeichnen und animieren =====
+// Die Figur wird per JavaScript bewegt: Bei jedem Bildschirmbild werden die Gelenkpunkte
+// zwischen den Posen weich überblendet (läuft zuverlässig in Safari und allen Browsern).
+
+const kbFrameSpeicher = {};
+function kbFrames(poseName) {
+  if (kbFrameSpeicher[poseName]) return kbFrameSpeicher[poseName];
   const pose = P[poseName];
   // Fehlende Punkte in späteren Bildern vom ersten Bild übernehmen
   const frames = pose.frames.map(f => ({ ...pose.frames[0], ...f }));
-  const dauer = pose.frames.length > 2 ? "4s" : "2.4s";
-
-  // Animationswerte: Bild 1 → Bild 2 (→ …) → zurück zu Bild 1
-  const werte = (punkt, achse) => {
-    const liste = frames.map(f => f[punkt] ? f[punkt][achse] : null);
-    if (liste.some(v => v === null)) return null;
-    return [...liste, liste[0]];
-  };
-  const anim = (attr, liste) => {
-    if (!liste || liste.every(v => v === liste[0])) return "";
-    const n = liste.length;
-    const zeiten = liste.map((_, i) => (i / (n - 1)).toFixed(3)).join(";");
-    const kurven = Array(n - 1).fill(".45 0 .55 1").join(";");
-    return `<animate attributeName="${attr}" values="${liste.join(";")}" keyTimes="${zeiten}" calcMode="spline" keySplines="${kurven}" dur="${dauer}" repeatCount="indefinite"/>`;
-  };
-  const f0 = frames[0];
-  const linie = (a, b, klasse = "") => {
-    if (!f0[a] || !f0[b]) return "";
-    return `<line class="${klasse}" x1="${f0[a][0]}" y1="${f0[a][1]}" x2="${f0[b][0]}" y2="${f0[b][1]}">` +
-      anim("x1", werte(a, 0)) + anim("y1", werte(a, 1)) + anim("x2", werte(b, 0)) + anim("y2", werte(b, 1)) + "</line>";
-  };
-  const kreis = (punkt, r, klasse) => {
-    if (!f0[punkt]) return "";
-    return `<circle class="${klasse}" cx="${f0[punkt][0]}" cy="${f0[punkt][1]}" r="${r}">` +
-      anim("cx", werte(punkt, 0)) + anim("cy", werte(punkt, 1)) + "</circle>";
-  };
   // Kettlebell sitzt unter der Hand, wenn nicht anders angegeben
   frames.forEach(f => { if (!f.kb && f.hand && !pose.ohneKb) f.kb = [f.hand[0], f.hand[1] + 5]; });
+  return (kbFrameSpeicher[poseName] = frames);
+}
 
-  return `<svg class="kb-grafik" viewBox="0 0 100 100" aria-hidden="true">
+// Position aller Punkte zu einem Zeitpunkt: Pose 1 → Pose 2 (→ …) → zurück zu Pose 1,
+// mit kurzem Halten an jeder Pose und weichem Anfahren/Abbremsen
+function kbPunkte(frames, zeit) {
+  const dauer = frames.length > 2 ? 4400 : 2600;      // Millisekunden pro Durchgang
+  const folge = [...frames, frames[0]];
+  const t = ((zeit % dauer) / dauer) * frames.length;
+  const i = Math.floor(t);
+  const roh = Math.min(Math.max((t - i - 0.12) / 0.76, 0), 1); // 12 % halten, dann bewegen
+  const u = 0.5 - Math.cos(Math.PI * roh) / 2;
+  const a = folge[i], b = folge[i + 1], punkte = {};
+  for (const k in a) {
+    punkte[k] = b[k] ? [a[k][0] + (b[k][0] - a[k][0]) * u, a[k][1] + (b[k][1] - a[k][1]) * u] : a[k];
+  }
+  return punkte;
+}
+
+function kbGrafik(poseName) {
+  const pose = P[poseName];
+  const f0 = kbFrames(poseName)[0];
+  const linie = (a, b, klasse = "") => f0[a] && f0[b]
+    ? `<line class="${klasse}" data-a="${a}" data-b="${b}" x1="${f0[a][0]}" y1="${f0[a][1]}" x2="${f0[b][0]}" y2="${f0[b][1]}"/>` : "";
+  const kreis = (p, r, klasse) => f0[p]
+    ? `<circle class="${klasse}" data-p="${p}" cx="${f0[p][0]}" cy="${f0[p][1]}" r="${r}"/>` : "";
+
+  return `<svg class="kb-grafik" data-pose="${poseName}" viewBox="0 0 100 100" aria-hidden="true">
     <line class="kb-boden" x1="4" y1="92" x2="96" y2="92"/>
     ${pose.bank ? '<rect class="kb-bank" x="14" y="78" width="44" height="5" rx="2"/><line class="kb-boden" x1="20" y1="83" x2="20" y2="92"/><line class="kb-boden" x1="52" y1="83" x2="52" y2="92"/>' : ""}
     ${linie("huefte", "knie2", "hinten")}${linie("knie2", "fuss2", "hinten")}
@@ -284,6 +289,32 @@ function kbGrafik(poseName, zweiKb) {
     ${linie("schulter", "ellbogen")}${linie("ellbogen", "hand")}
     ${kreis("kopf", 5.5, "kb-kopf")}
   </svg>`;
+}
+
+// Eine gemeinsame Schleife bewegt alle sichtbaren Figuren und stoppt von selbst,
+// sobald keine mehr zu sehen ist (spart Akku)
+let kbSchleifeLaeuft = false;
+function kbAnimieren() {
+  if (kbSchleifeLaeuft) return;
+  kbSchleifeLaeuft = true;
+  const schritt = (jetzt) => {
+    const figuren = [...document.querySelectorAll(".kb-grafik[data-pose]")].filter(g => !g.closest("[hidden]"));
+    if (!figuren.length) { kbSchleifeLaeuft = false; return; }
+    figuren.forEach(g => {
+      const p = kbPunkte(kbFrames(g.dataset.pose), jetzt);
+      g.querySelectorAll("line[data-a]").forEach(l => {
+        const a = p[l.dataset.a], b = p[l.dataset.b];
+        l.setAttribute("x1", a[0].toFixed(2)); l.setAttribute("y1", a[1].toFixed(2));
+        l.setAttribute("x2", b[0].toFixed(2)); l.setAttribute("y2", b[1].toFixed(2));
+      });
+      g.querySelectorAll("circle[data-p]").forEach(c => {
+        const q = p[c.dataset.p];
+        c.setAttribute("cx", q[0].toFixed(2)); c.setAttribute("cy", q[1].toFixed(2));
+      });
+    });
+    requestAnimationFrame(schritt);
+  };
+  requestAnimationFrame(schritt);
 }
 
 // ===== Eine Einheit für den Trainingsplan =====
@@ -317,7 +348,7 @@ function kbUebungenElement(kb) {
 
     const karte = document.createElement("div");
     karte.className = "kb-uebung";
-    karte.innerHTML = kbGrafik(u.pose, u.zweiKb); // Grafik ist fester, eigener Inhalt
+    karte.innerHTML = kbGrafik(u.pose); // Grafik ist fester, eigener Inhalt
 
     const text = document.createElement("div");
     text.className = "kb-text";
@@ -338,5 +369,6 @@ function kbUebungenElement(kb) {
     karte.appendChild(text);
     box.appendChild(karte);
   });
+  kbAnimieren();
   return box;
 }
