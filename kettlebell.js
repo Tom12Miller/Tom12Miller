@@ -256,13 +256,15 @@ function kbFrames(poseName) {
 
 // Position aller Punkte zu einem Zeitpunkt: Pose 1 → Pose 2 (→ …) → zurück zu Pose 1,
 // mit kurzem Halten an jeder Pose und weichem Anfahren/Abbremsen
-function kbPunkte(frames, zeit) {
-  const dauer = frames.length > 2 ? 4400 : 2600;      // Millisekunden pro Durchgang
+// pose.dauer = Millisekunden pro Durchgang, pose.halten = Anteil Pause an jeder Pose (0 = fließend, z. B. Laufen)
+function kbPunkte(frames, zeit, pose = {}) {
+  const dauer = pose.dauer || (frames.length > 2 ? 4400 : 2600);
+  const halten = pose.halten !== undefined ? pose.halten : 0.12;
   const folge = [...frames, frames[0]];
   const t = ((zeit % dauer) / dauer) * frames.length;
   const i = Math.floor(t);
-  const roh = Math.min(Math.max((t - i - 0.12) / 0.76, 0), 1); // 12 % halten, dann bewegen
-  const u = 0.5 - Math.cos(Math.PI * roh) / 2;
+  const roh = Math.min(Math.max((t - i - halten) / (1 - 2 * halten), 0), 1);
+  const u = halten === 0 ? roh : 0.5 - Math.cos(Math.PI * roh) / 2;
   const a = folge[i], b = folge[i + 1], punkte = {};
   for (const k in a) {
     punkte[k] = b[k] ? [a[k][0] + (b[k][0] - a[k][0]) * u, a[k][1] + (b[k][1] - a[k][1]) * u] : a[k];
@@ -279,11 +281,13 @@ function kbGrafik(poseName) {
     ? `<circle class="${klasse}" data-p="${p}" cx="${f0[p][0]}" cy="${f0[p][1]}" r="${r}"/>` : "";
 
   return `<svg class="kb-grafik" data-pose="${poseName}" viewBox="0 0 100 100" aria-hidden="true">
-    <line class="kb-boden" x1="4" y1="92" x2="96" y2="92"/>
+    ${pose.boden ? `<line class="kb-boden" x1="${pose.boden[0]}" y1="${pose.boden[1]}" x2="${pose.boden[2]}" y2="${pose.boden[3]}"/>`
+                 : '<line class="kb-boden" x1="4" y1="92" x2="96" y2="92"/>'}
+    ${pose.stufe ? '<rect class="kb-bank" x="56" y="78" width="30" height="14" rx="2"/>' : ""}
     ${pose.bank ? '<rect class="kb-bank" x="14" y="78" width="44" height="5" rx="2"/><line class="kb-boden" x1="20" y1="83" x2="20" y2="92"/><line class="kb-boden" x1="52" y1="83" x2="52" y2="92"/>' : ""}
     ${linie("huefte", "knie2", "hinten")}${linie("knie2", "fuss2", "hinten")}
     ${linie("schulter", "ellbogen2", "hinten")}${linie("ellbogen2", "hand2", "hinten")}
-    ${linie("schulter", "huefte")}${linie("huefte", "knie")}${linie("knie", "fuss")}
+    ${f0.mitte ? linie("schulter", "mitte") + linie("mitte", "huefte") : linie("schulter", "huefte")}${linie("huefte", "knie")}${linie("knie", "fuss")}
     ${linie("kopf", "schulter")}
     ${kreis("kb2", 4.5, "kb-gewicht")}${kreis("kb", 4.5, "kb-gewicht")}
     ${linie("schulter", "ellbogen")}${linie("ellbogen", "hand")}
@@ -301,7 +305,7 @@ function kbAnimieren() {
     const figuren = [...document.querySelectorAll(".kb-grafik[data-pose]")].filter(g => !g.closest("[hidden]"));
     if (!figuren.length) { kbSchleifeLaeuft = false; return; }
     figuren.forEach(g => {
-      const p = kbPunkte(kbFrames(g.dataset.pose), jetzt);
+      const p = kbPunkte(kbFrames(g.dataset.pose), jetzt, P[g.dataset.pose]);
       g.querySelectorAll("line[data-a]").forEach(l => {
         const a = p[l.dataset.a], b = p[l.dataset.b];
         l.setAttribute("x1", a[0].toFixed(2)); l.setAttribute("y1", a[1].toFixed(2));

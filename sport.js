@@ -147,6 +147,7 @@ function strukturAusrechnen(e, plus) {
     ...e,
     sek,
     km: Math.round((sek / 60) * KM_PRO_MIN * 10) / 10,
+    teile,
     ablauf: `${kurz(st.ein)} einlaufen · ${kern} · ${kurz(st.aus)} auslaufen`
   };
 }
@@ -311,21 +312,23 @@ function sportAnzeigen() {
     zeile.append(sym, text, haken);
     liste.appendChild(zeile);
 
-    // Kettlebell-Tag: Übungen mit Grafik zum Aufklappen
-    if (e.kb) {
+    // Übungen mit Grafik zum Aufklappen (Kettlebell, Athletik, Mobility, Lauf)
+    const inhalt = uebungenFuer(e, sportTag);
+    if (inhalt) {
       const schluessel = `${sportTag}-${n}`;
       const bereich = document.createElement("li");
       bereich.className = "kb-bereich";
       const knopf = document.createElement("button");
       knopf.className = "kb-aufklappen";
       const offen = kbOffen.has(schluessel);
-      knopf.textContent = offen ? "Übungen ausblenden ▴" : "Übungen anzeigen ▾";
+      const was = e.art === "lauf" ? "Ablauf" : "Übungen";
+      knopf.textContent = offen ? `${was} ausblenden ▴` : `${was} anzeigen ▾`;
       knopf.addEventListener("click", () => {
         kbOffen.has(schluessel) ? kbOffen.delete(schluessel) : kbOffen.add(schluessel);
         sportAnzeigen();
       });
       bereich.appendChild(knopf);
-      if (offen) bereich.appendChild(kbUebungenElement(e.kb));
+      if (offen) bereich.appendChild(inhalt());
       liste.appendChild(bereich);
     }
   });
